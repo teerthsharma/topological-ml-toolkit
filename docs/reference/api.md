@@ -90,6 +90,55 @@ Strict selection raises `BackendUnavailableError` for a planned backend:
 topoml.select_backend_adapter("asm_avx512")
 ```
 
+### Prototype topology diagnostics
+
+These APIs are active prototype diagnostics. They are implemented, tested, and
+covered by the E2E claim gate. They do not claim accelerated backend behavior.
+
+`topoml.metric_cover(points, radius)` builds one metric cover cell per point.
+Each cell contains the indices within the radius.
+
+`topoml.nerve_graph(cover)` returns a graph with one node per cover cell and an
+edge when two cover cells share at least one point.
+
+```python
+cover = topoml.metric_cover(points, radius=0.25)
+nerve = topoml.nerve_graph(cover)
+```
+
+`topoml.mapper_graph(points, filter_values, intervals, overlap, cluster_radius)`
+builds a small Mapper-style graph from a scalar filter, overlapping intervals,
+and threshold-connected components inside each pullback set.
+
+```python
+graph = topoml.mapper_graph(points, points[:, 0], intervals=4, overlap=0.25, cluster_radius=0.5)
+```
+
+`topoml.sheaf_consistency_residual(sections, restrictions)` evaluates local
+agreement residuals across named sections and linear restriction maps.
+
+```python
+residual = topoml.sheaf_consistency_residual(
+    {"layer0": x0, "layer1": x1},
+    [("layer0", "layer1", restriction_matrix)],
+)
+```
+
+### `topoml.write_dashboard(path, title, diagram=None, feature_matrix=None, metadata=None)`
+
+Writes a self-contained HTML dashboard for local inspection or CI artifacts.
+The exporter intentionally avoids heavy JavaScript dependencies, so it can be
+opened from disk or uploaded as an artifact.
+
+```python
+topoml.write_dashboard(
+    "artifacts/dashboard.html",
+    title="Topology inspection",
+    diagram=diagram,
+    feature_matrix=features,
+)
+```
+
 ## Planned Public APIs
 
 These are not shipped yet. They are design commitments with gates:

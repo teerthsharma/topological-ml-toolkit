@@ -14,7 +14,7 @@ typed truth.
 
 ## Output Contract
 
-Each benchmark artifact records:
+Full benchmark artifacts should record:
 
 - backend id;
 - dtype;
@@ -26,3 +26,7 @@ Each benchmark artifact records:
 - warning list;
 - correctness metric.
 
+The current E2E claim artifact is smaller because it is a correctness and API
+claim gate, not a full performance study. It records deterministic evidence for
+active public behavior and marks timing rows as smoke records rather than
+speedup claims.

@@ -19,6 +19,18 @@ from .backends import (
     select_backend_adapter,
 )
 from .features import PHFeaturizer
+from .gui import write_dashboard
+from .topology import (
+    Cover,
+    CoverCell,
+    MapperGraph,
+    NerveGraph,
+    SheafResidual,
+    mapper_graph,
+    metric_cover,
+    nerve_graph,
+    sheaf_consistency_residual,
+)
 
 __all__ = [
     "BackendAdapter",
@@ -26,14 +38,24 @@ __all__ = [
     "BackendSelectionResult",
     "BackendUnavailableError",
     "BettiNumbers",
+    "Cover",
+    "CoverCell",
+    "MapperGraph",
+    "NerveGraph",
     "PHFeaturizer",
     "PersistenceDiagram",
     "PersistencePair",
+    "SheafResidual",
     "available_backends",
     "backend_adapter",
     "backend_adapters",
+    "mapper_graph",
+    "metric_cover",
+    "nerve_graph",
     "persistent_homology",
     "select_backend",
     "select_backend_adapter",
+    "sheaf_consistency_residual",
     "time_delay_embedding",
+    "write_dashboard",
 ]

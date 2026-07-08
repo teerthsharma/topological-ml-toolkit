@@ -7,6 +7,7 @@ import sys
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import numpy as np
 
@@ -128,12 +129,65 @@ def _claim_benchmark_record() -> dict:
     return {"rows": rows, "claim_scope": "timed smoke record, not a speedup claim"}
 
 
+def _claim_topology_prototypes() -> dict:
+    points = np.array([[0.0, 0.0], [0.2, 0.0], [2.0, 0.0]], dtype=float)
+    cover = topoml.metric_cover(points, radius=0.25)
+    nerve = topoml.nerve_graph(cover)
+    mapper = topoml.mapper_graph(
+        np.array([[0.0], [0.4], [0.8]], dtype=float),
+        np.array([0.0, 0.4, 0.8], dtype=float),
+        intervals=2,
+        overlap=0.75,
+        cluster_radius=1.0,
+    )
+    residual = topoml.sheaf_consistency_residual(
+        {"a": np.array([1.0, 2.0]), "b": np.array([1.0, 3.0])},
+        [("a", "b", np.eye(2))],
+    )
+
+    assert nerve.edges == ((0, 1),)
+    assert mapper.edges == ((0, 1),)
+    assert residual.max_residual == 1.0
+    return {
+        "cover_cells": [list(cell.members) for cell in cover.cells],
+        "nerve_edges": [list(edge) for edge in nerve.edges],
+        "mapper_edges": [list(edge) for edge in mapper.edges],
+        "sheaf_max_residual": residual.max_residual,
+        "claim_scope": "prototype topology diagnostics, not accelerated backend behavior",
+    }
+
+
+def _claim_dashboard_export() -> dict:
+    points = np.array([[0.0, 0.0], [0.2, 0.0], [1.0, 0.0]], dtype=float)
+    diagram = topoml.persistent_homology(points, max_dim=0, max_radius=2.0)
+    features = topoml.PHFeaturizer(max_dim=0, radii=[0.0, 0.5]).fit_transform([points])
+    with TemporaryDirectory() as tmp:
+        path = topoml.write_dashboard(
+            Path(tmp) / "dashboard.html",
+            title="E2E topology dashboard",
+            diagram=diagram,
+            feature_matrix=features,
+            metadata={"source": "e2e_claims"},
+        )
+        html = path.read_text(encoding="utf-8")
+    assert "E2E topology dashboard" in html
+    assert "Persistence Diagram" in html
+    assert "Feature Matrix" in html
+    return {
+        "html_bytes": len(html.encode("utf-8")),
+        "self_contained": "plotly" not in html.lower(),
+        "claim_scope": "static GUI export for inspection, not a hosted web application",
+    }
+
+
 def run_claims() -> list[ClaimResult]:
     return [
         _record("H0 cluster merges match known Betti numbers", _claim_h0_cluster_merges),
         _record("H1 square cycle appears and is filled by diagonals/triangles", _claim_h1_square_cycle),
         _record("Time-delay embedding returns graph-ready delay vectors", _claim_time_delay_embedding),
         _record("PHFeaturizer exports fixed-width ML feature matrices", _claim_ph_featurizer),
+        _record("Topology prototype APIs build covers, Mapper edges, and sheaf residuals", _claim_topology_prototypes),
+        _record("GUI exporter writes a self-contained topology dashboard", _claim_dashboard_export),
         _record("Backend metadata separates active code from planned acceleration", _claim_backend_contract),
         _record("Importing topoml does not import heavy optional ML/GPU stacks", _claim_import_guard),
         _record("Benchmark runner records active Python-reference timings", _claim_benchmark_record),

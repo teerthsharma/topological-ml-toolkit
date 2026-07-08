@@ -4,9 +4,9 @@ Topology becomes useful in ML systems when it changes a decision: which data to
 batch, which activations to inspect, which shards disagree, which trajectories
 are stable, or which backend is allowed to run.
 
-Status: Docs-only and Prototype API. The current repository documents these
-families and exposes backend contracts. It does not claim accelerated systems
-behavior yet.
+Status: Active prototype for metric covers, nerve graphs, Mapper-style graphs,
+and sheaf residual diagnostics. It does not claim accelerated systems behavior
+yet.
 
 ## Covers, Nerves, And Routing
 
@@ -38,6 +38,13 @@ flowchart LR
 Promotion gate: a cover-based method must beat a same-budget non-topological
 selector on the task metric, and it must report construction overhead.
 
+Active prototype API:
+
+```python
+cover = topoml.metric_cover(points, radius=0.25)
+nerve = topoml.nerve_graph(cover)
+```
+
 ## Mapper And Reeb Graphs
 
 Mapper turns a dataset into a graph using a filter function
@@ -63,7 +70,11 @@ flowchart TB
   G --> I["Inspect modes, bridges, outliers, and failure regions"]
 ```
 
-Status: Prototype API target. No active Mapper implementation is claimed yet.
+Status: Active prototype.
+
+```python
+graph = topoml.mapper_graph(points, filters, intervals=4, overlap=0.25, cluster_radius=0.5)
+```
 
 ## Sheaves And Cosheaves
 
@@ -83,8 +94,15 @@ r_{U,V} = \|\rho_{U,V}s_U - s_V\|
 In ML systems, stalks can represent layers, heads, shards, feature stores,
 sensors, or workers. Residuals can identify where local views disagree.
 
-Status: Docs-only first, then prototype diagnostics. Sheaf residuals should not
-be sold as a speedup unless they drive a measured routing or compression rule.
+Status: Active prototype diagnostic. Sheaf residuals should not be sold as a
+speedup unless they drive a measured routing or compression rule.
+
+```python
+residual = topoml.sheaf_consistency_residual(
+    {"head0": values0, "head1": values1},
+    [("head0", "head1", restriction_matrix)],
+)
+```
 
 ## Domain Theory And Scott Topology
 

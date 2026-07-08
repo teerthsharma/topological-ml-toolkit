@@ -60,6 +60,10 @@ Python package: `topoml`
 - `PersistenceDiagram.betti_at(radius)`
 - `PersistenceDiagram.to_plotly_trace(dimension)`
 - `PHFeaturizer(max_dim, radii, homology_dims)`
+- `metric_cover(points, radius)` and `nerve_graph(cover)`
+- `mapper_graph(points, filter_values, intervals, overlap, cluster_radius)`
+- `sheaf_consistency_residual(sections, restrictions)`
+- `write_dashboard(path, title, diagram, feature_matrix, metadata)`
 - backend metadata and backend selection contracts
 - strict backend adapters through `select_backend_adapter`
 
@@ -90,6 +94,33 @@ clouds = [
 
 features = topoml.PHFeaturizer(max_dim=0, radii=[0.0, 0.15, 1.0]).fit_transform(clouds)
 print(features)
+```
+
+Prototype topology diagnostics:
+
+```python
+cover = topoml.metric_cover(points, radius=0.25)
+nerve = topoml.nerve_graph(cover)
+
+mapper = topoml.mapper_graph(
+    points,
+    filter_values=points[:, 0],
+    intervals=3,
+    overlap=0.25,
+    cluster_radius=0.5,
+)
+```
+
+Static dashboard export:
+
+```python
+topoml.write_dashboard(
+    "artifacts/dashboard.html",
+    title="Topology inspection",
+    diagram=diagram,
+    feature_matrix=features,
+    metadata={"dataset": "example"},
+)
 ```
 
 ## Backend Roadmap
@@ -124,6 +155,8 @@ The E2E claim benchmark currently verifies:
 - known \(H_1\) square-cycle behavior;
 - time-delay embedding output shape;
 - fixed-width `PHFeaturizer` output;
+- prototype cover, nerve, Mapper, and sheaf residual diagnostics;
+- self-contained HTML dashboard export;
 - backend metadata separation between active and planned backends;
 - import safety for optional heavy stacks;
 - benchmark-smoke timing records for the active Python reference path.
