@@ -18,7 +18,14 @@ from .backends import (
     backend_adapters,
     select_backend_adapter,
 )
-from .features import PHFeaturizer
+from .features import (
+    BettiCurve,
+    PHFeaturizer,
+    PersistenceImage,
+    TopologySignature,
+    activation_signature,
+    point_cloud_signature,
+)
 from .gui import write_dashboard
 from .topology import (
     Cover,
@@ -26,6 +33,7 @@ from .topology import (
     MapperGraph,
     NerveGraph,
     SheafResidual,
+    graph_signature,
     mapper_graph,
     metric_cover,
     nerve_graph,
@@ -38,6 +46,7 @@ __all__ = [
     "BackendSelectionResult",
     "BackendUnavailableError",
     "BettiNumbers",
+    "BettiCurve",
     "Cover",
     "CoverCell",
     "MapperGraph",
@@ -45,14 +54,19 @@ __all__ = [
     "PHFeaturizer",
     "PersistenceDiagram",
     "PersistencePair",
+    "PersistenceImage",
     "SheafResidual",
+    "TopologySignature",
+    "activation_signature",
     "available_backends",
     "backend_adapter",
     "backend_adapters",
+    "graph_signature",
     "mapper_graph",
     "metric_cover",
     "nerve_graph",
     "persistent_homology",
+    "point_cloud_signature",
     "select_backend",
     "select_backend_adapter",
     "sheaf_consistency_residual",

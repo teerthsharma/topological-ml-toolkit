@@ -1,6 +1,17 @@
 # Backend Contracts
 
-This directory documents backend contracts before low-level code lands.
+This directory contains backend contracts and early backend source files. The
+files are real CUDA, Assembly, C++, and Triton source, but they are not selected
+by the public package until correctness and benchmark gates pass.
+
+## Source Inventory
+
+- `cuda/topology_distance.cu`: CUDA pairwise distance and threshold-edge kernels.
+- `cuda/warp_reductions.cu`: CUDA warp/block reductions and persistence-image accumulation.
+- `asm/x86_64_l2_f32.S`: x86-64 scalar L2-squared ABI reference.
+- `asm/x86_64_dispatch.S`: CPUID probes for AVX2 and AVX-512 gates.
+- `cpp/topoml_native.cpp`: portable C++ C-ABI distance and threshold routines.
+- `triton/topology_distance.py`: optional Triton JIT pairwise distance prototype.
 
 ## Backend Metadata
 
@@ -40,4 +51,3 @@ Triton kernels must follow compiler-kernel discipline:
 
 Framework adapters must not be required core dependencies. They convert tensors,
 capture activations, and hand data to core topology routines.
-

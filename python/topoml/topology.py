@@ -44,6 +44,12 @@ class SheafResidual:
     mean_residual: float
 
 
+@dataclass(frozen=True)
+class TopologySignature:
+    kind: str
+    values: dict[str, float]
+
+
 def metric_cover(points: np.ndarray, radius: float) -> Cover:
     pts = _as_points(points)
     if radius < 0 or not np.isfinite(radius):
@@ -134,6 +140,29 @@ def sheaf_consistency_residual(
     )
 
 
+def graph_signature(adjacency: np.ndarray) -> TopologySignature:
+    matrix = np.asarray(adjacency, dtype=float)
+    if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1] or matrix.shape[0] == 0:
+        raise ValueError("adjacency must be a non-empty square matrix")
+    if not np.isfinite(matrix).all():
+        raise ValueError("adjacency must contain only finite values")
+    undirected = np.maximum(matrix, matrix.T) > 0
+    np.fill_diagonal(undirected, False)
+    n_nodes = undirected.shape[0]
+    n_edges = int(np.count_nonzero(np.triu(undirected, k=1)))
+    components = _graph_components(undirected)
+    cycle_rank = n_edges - n_nodes + components
+    return TopologySignature(
+        kind="graph",
+        values={
+            "nodes": float(n_nodes),
+            "edges": float(n_edges),
+            "components": float(components),
+            "cycle_rank": float(cycle_rank),
+        },
+    )
+
+
 def _as_points(points: np.ndarray) -> np.ndarray:
     pts = np.asarray(points, dtype=float)
     if pts.ndim != 2 or pts.shape[0] == 0 or pts.shape[1] == 0:
@@ -173,4 +202,22 @@ def _connected_components(members: tuple[int, ...], dists: np.ndarray, radius: f
                 queue.append(neighbor)
                 component.append(neighbor)
         components.append(tuple(sorted(component)))
+    return components
+
+
+def _graph_components(adjacency: np.ndarray) -> int:
+    remaining = set(range(adjacency.shape[0]))
+    components = 0
+    while remaining:
+        components += 1
+        start = min(remaining)
+        queue: deque[int] = deque([start])
+        remaining.remove(start)
+        while queue:
+            current = queue.popleft()
+            for neighbor in np.flatnonzero(adjacency[current]):
+                idx = int(neighbor)
+                if idx in remaining:
+                    remaining.remove(idx)
+                    queue.append(idx)
     return components

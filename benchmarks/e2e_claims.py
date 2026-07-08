@@ -81,6 +81,35 @@ def _claim_ph_featurizer() -> dict:
     }
 
 
+def _claim_feature_encoders_and_signatures() -> dict:
+    points = np.array([[0.0, 0.0], [0.2, 0.0], [5.0, 0.0]], dtype=float)
+    diagram = topoml.persistent_homology(points, max_dim=0, max_radius=10.0)
+    curve = topoml.BettiCurve(radii=[0.0, 0.3, 6.0], homology_dims=[0])
+    curve_features = curve.fit_transform([diagram])
+    image = topoml.PersistenceImage(width=4, height=3, sigma=0.2).fit_transform([diagram])
+    point_sig = topoml.point_cloud_signature(points, radii=[0.0, 0.3], max_dim=0)
+    graph_sig = topoml.graph_signature(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]], dtype=float))
+    activation_sig = topoml.activation_signature(
+        np.array([[[0.0, 0.0], [1.0, 0.0]], [[0.0, 1.0], [1.0, 1.0]]], dtype=float),
+        radii=[0.0, 1.1],
+        max_dim=0,
+    )
+
+    assert curve_features.tolist() == [[3.0, 2.0, 1.0]]
+    assert image.shape == (1, 12)
+    assert image.sum() > 0.0
+    assert point_sig.values["beta0@0.3"] == 2.0
+    assert graph_sig.values["cycle_rank"] == 1.0
+    assert activation_sig.values["samples"] == 4.0
+    return {
+        "betti_curve": curve_features.tolist(),
+        "persistence_image_shape": list(image.shape),
+        "point_cloud_signature": point_sig.values,
+        "graph_signature": graph_sig.values,
+        "activation_signature": activation_sig.values,
+    }
+
+
 def _claim_backend_contract() -> dict:
     metadata = {backend.id: backend for backend in topoml.available_backends()}
     active = {backend.id for backend in metadata.values() if backend.active and backend.available}
@@ -100,6 +129,28 @@ def _claim_backend_contract() -> dict:
             "available": adapter_result.available,
             "missing_gates": list(adapter_result.missing_gates),
         },
+    }
+
+
+def _claim_backend_source_inventory() -> dict:
+    root = Path(__file__).resolve().parents[1]
+    files = [
+        root / "backends" / "cuda" / "topology_distance.cu",
+        root / "backends" / "cuda" / "warp_reductions.cu",
+        root / "backends" / "asm" / "x86_64_l2_f32.S",
+        root / "backends" / "asm" / "x86_64_dispatch.S",
+        root / "backends" / "cpp" / "topoml_native.cpp",
+        root / "backends" / "triton" / "topology_distance.py",
+    ]
+    sizes = {}
+    for path in files:
+        assert path.exists(), path
+        size = path.stat().st_size
+        assert size > 0, path
+        sizes[str(path.relative_to(root)).replace("\\", "/")] = size
+    return {
+        "source_files": sizes,
+        "claim_scope": "backend source inventory only; runtime selection remains gated",
     }
 
 
@@ -186,9 +237,14 @@ def run_claims() -> list[ClaimResult]:
         _record("H1 square cycle appears and is filled by diagonals/triangles", _claim_h1_square_cycle),
         _record("Time-delay embedding returns graph-ready delay vectors", _claim_time_delay_embedding),
         _record("PHFeaturizer exports fixed-width ML feature matrices", _claim_ph_featurizer),
+        _record(
+            "Feature encoders and topology signatures cover diagrams, graphs, and activations",
+            _claim_feature_encoders_and_signatures,
+        ),
         _record("Topology prototype APIs build covers, Mapper edges, and sheaf residuals", _claim_topology_prototypes),
         _record("GUI exporter writes a self-contained topology dashboard", _claim_dashboard_export),
         _record("Backend metadata separates active code from planned acceleration", _claim_backend_contract),
+        _record("Planned backend source files exist for CUDA, ASM, C++, and Triton", _claim_backend_source_inventory),
         _record("Importing topoml does not import heavy optional ML/GPU stacks", _claim_import_guard),
         _record("Benchmark runner records active Python-reference timings", _claim_benchmark_record),
     ]

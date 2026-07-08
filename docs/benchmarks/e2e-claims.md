@@ -20,9 +20,12 @@ The current E2E gate verifies:
 - an \(H_1\) square cycle that appears before diagonal/triangle filling;
 - time-delay embedding shape and first delay vector;
 - fixed-width Betti-curve features from `PHFeaturizer`;
+- `BettiCurve`, `PersistenceImage`, and topology signatures for point clouds,
+  graphs, and activations;
 - prototype metric-cover, nerve, Mapper, and sheaf residual diagnostics;
 - static self-contained GUI dashboard export;
 - backend metadata that separates active code from planned acceleration;
+- planned backend source inventory for CUDA, Assembly, C++, and Triton;
 - import safety for optional ML/GPU stacks;
 - benchmark-smoke timing records for the Python reference path.
 

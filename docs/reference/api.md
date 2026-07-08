@@ -72,6 +72,43 @@ The current active encoding is a Betti curve sampler:
 f = [\beta_0(r_1), \ldots, \beta_0(r_n), \beta_1(r_1), \ldots]
 \]
 
+### `topoml.BettiCurve(radii, homology_dims=(0, 1))`
+
+Encodes existing `PersistenceDiagram` objects as fixed-width Betti curve samples.
+
+```python
+diagram = topoml.persistent_homology(points, max_dim=1, max_radius=2.0)
+features = topoml.BettiCurve(radii=[0.0, 0.5, 1.0]).fit_transform([diagram])
+```
+
+### `topoml.PersistenceImage(width=16, height=16, sigma=0.1)`
+
+Encodes finite persistence pairs into a flattened image-like vector using
+birth-persistence coordinates and Gaussian kernels. Infinite bars are excluded
+from the image because they do not have finite persistence.
+
+```python
+image = topoml.PersistenceImage(width=16, height=16).fit_transform([diagram])
+```
+
+### Topology signatures
+
+`TopologySignature` is a small typed summary for point clouds, graphs, and model
+activations.
+
+```python
+point_sig = topoml.point_cloud_signature(points, radii=[0.0, 0.5], max_dim=1)
+graph_sig = topoml.graph_signature(adjacency)
+activation_sig = topoml.activation_signature(activations, radii=[0.0, 1.0], max_dim=0)
+```
+
+Graph signatures report node count, undirected edge count, connected components,
+and graph cycle rank:
+
+\[
+\beta_1(G) = |E| - |V| + c
+\]
+
 ### Backend adapters
 
 `topoml.backend_adapters()` returns API-level backend contracts for active and
@@ -143,9 +180,6 @@ topoml.write_dashboard(
 
 These are not shipped yet. They are design commitments with gates:
 
-- `BettiCurve`: fixed vector curve sampler.
-- `PersistenceImage`: image feature encoder.
-- `TopologySignature`: backend-independent feature summary.
 - `TorchActivationCapture`: PyTorch adapter.
 - `TensorFlowActivationCapture`: TensorFlow adapter.
 - `TritonScheduleBuilder`: topology-derived sparse schedule builder.

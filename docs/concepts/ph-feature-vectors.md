@@ -40,10 +40,12 @@ f = [\beta_0(r_1), \ldots, \beta_0(r_N), \beta_1(r_1), \ldots, \beta_1(r_N)]
 
 This is simple, interpretable, and graphable.
 
-The active Python API exposes this through `PHFeaturizer`:
+The active Python API exposes this through `PHFeaturizer` for point clouds and
+`BettiCurve` for existing diagrams:
 
 ```python
 features = topoml.PHFeaturizer(max_dim=1, radii=[0.0, 0.25, 0.5, 1.0]).fit_transform(clouds)
+curve = topoml.BettiCurve(radii=[0.0, 0.25, 0.5, 1.0]).fit_transform(diagrams)
 ```
 
 ```mermaid
@@ -76,7 +78,7 @@ The \(k\)-th persistence landscape value \(\lambda_k(t)\) is the \(k\)-th
 largest tent value at \(t\). Landscapes convert variable-size diagrams into
 functions that can be sampled, averaged, and compared.
 
-Status: Planned API. Not implemented yet.
+Status: Formula documented. Direct landscape encoding is not implemented yet.
 
 ## Persistence Image
 
@@ -90,8 +92,30 @@ I(x,y) = \sum_i w(b_i,p_i)\exp\left(-\frac{(x-b_i)^2+(y-p_i)^2}{2\sigma^2}\right
 
 This produces an image-like tensor for CNNs or tabular models.
 
-Status: Planned API. It needs tests for grid shape, stability, and empty-diagram
-behavior before becoming active.
+Status: Active fixed-grid encoder through `PersistenceImage`. Infinite bars are
+excluded because they do not have finite persistence.
+
+```python
+image = topoml.PersistenceImage(width=16, height=16, sigma=0.1).fit_transform(diagrams)
+```
+
+## Topology Signatures
+
+The active signature helpers expose compact summaries for common ML objects:
+
+```python
+point_sig = topoml.point_cloud_signature(points, radii=[0.0, 0.5], max_dim=1)
+graph_sig = topoml.graph_signature(adjacency)
+activation_sig = topoml.activation_signature(activations, radii=[0.0, 1.0], max_dim=0)
+```
+
+For graphs, the first implemented invariant is the cycle rank:
+
+\[
+\beta_1(G) = |E| - |V| + c
+\]
+
+where \(c\) is the number of connected components.
 
 ## Feature Contract
 

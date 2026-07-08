@@ -60,6 +60,9 @@ Python package: `topoml`
 - `PersistenceDiagram.betti_at(radius)`
 - `PersistenceDiagram.to_plotly_trace(dimension)`
 - `PHFeaturizer(max_dim, radii, homology_dims)`
+- `BettiCurve(radii, homology_dims)`
+- `PersistenceImage(width, height, sigma)`
+- `point_cloud_signature`, `graph_signature`, and `activation_signature`
 - `metric_cover(points, radius)` and `nerve_graph(cover)`
 - `mapper_graph(points, filter_values, intervals, overlap, cluster_radius)`
 - `sheaf_consistency_residual(sections, restrictions)`
@@ -160,6 +163,17 @@ The E2E claim benchmark currently verifies:
 - backend metadata separation between active and planned backends;
 - import safety for optional heavy stacks;
 - benchmark-smoke timing records for the active Python reference path.
+
+Manual CUDA tensor benchmark for GPU machines:
+
+```powershell
+python benchmarks/benchmark_cuda_tensors.py --out artifacts/cuda-tensor-topology.json
+```
+
+This benchmark allocates real CUDA tensors, runs a CUDA-backed PyTorch projection
+and `torch.cdist`, times the GPU section with CUDA events, and then runs the
+current topology reduction on the selected activation cloud. It refuses to emit
+fake CUDA results when CUDA is unavailable.
 
 Run it locally:
 

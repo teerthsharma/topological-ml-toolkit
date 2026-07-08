@@ -44,6 +44,7 @@ nav:
       - E2E Claim Gate: benchmarks/e2e-claims.md
   - Backends:
       - Backend Roadmap: backends/roadmap.md
+      - Language Mix: backends/language-mix.md
   - Reference:
       - API: reference/api.md
       - Contribution Standard: reference/contributing.md

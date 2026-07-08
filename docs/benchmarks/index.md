@@ -30,3 +30,18 @@ The current E2E claim artifact is smaller because it is a correctness and API
 claim gate, not a full performance study. It records deterministic evidence for
 active public behavior and marks timing rows as smoke records rather than
 speedup claims.
+
+## CUDA Tensor Benchmark
+
+GPU machines can run a manual CUDA tensor benchmark:
+
+```powershell
+python benchmarks/benchmark_cuda_tensors.py --out artifacts/cuda-tensor-topology.json
+```
+
+This benchmark uses real CUDA tensors and CUDA events. It runs a PyTorch
+projection and `torch.cdist` on the GPU, then feeds the selected activation cloud
+into the current topology stack. The persistent homology reduction is still CPU
+reference code, so the artifact separates `cuda_ms` from `cpu_topology_ms`.
+
+The script exits instead of producing fake data when CUDA is unavailable.
