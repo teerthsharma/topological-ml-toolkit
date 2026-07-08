@@ -309,6 +309,35 @@ def _claim_framework_adapter_import_safety() -> dict:
     }
 
 
+def _claim_visual_topology_gallery_docs() -> dict:
+    root = Path(__file__).resolve().parents[1]
+    pages = {
+        "mapper": root / "docs" / "gallery" / "mapper-reeb-activation-map.md",
+        "sheaf": root / "docs" / "gallery" / "sheaf-consistency-residuals.md",
+        "cover": root / "docs" / "gallery" / "covers-nerves-routing.md",
+    }
+    required_phrases = {
+        "mapper": ("Mapper graph", "Claim Boundary", "topoml.mapper_graph"),
+        "sheaf": ("sheaf_consistency_residual", "Claim Boundary", "Residual"),
+        "cover": ("metric_cover", "Benchmark Gate", "same-budget random"),
+    }
+    evidence = {}
+    for key, path in pages.items():
+        assert path.exists(), path
+        text = path.read_text(encoding="utf-8")
+        for phrase in required_phrases[key]:
+            assert phrase in text, f"{phrase!r} missing from {path}"
+        evidence[key] = {
+            "path": str(path.relative_to(root)).replace("\\", "/"),
+            "bytes": len(text.encode("utf-8")),
+            "has_mermaid": "```mermaid" in text,
+        }
+    return {
+        "pages": evidence,
+        "claim_scope": "visual docs for active prototypes with explicit claim boundaries",
+    }
+
+
 def _claim_dashboard_export() -> dict:
     points = np.array([[0.0, 0.0], [0.2, 0.0], [1.0, 0.0]], dtype=float)
     diagram = topoml.persistent_homology(points, max_dim=0, max_radius=2.0)
@@ -349,6 +378,7 @@ def run_claims() -> list[ClaimResult]:
         ),
         _record("Topology family coverage registry includes the objective taxonomy", _claim_topology_family_registry),
         _record("PyTorch and TensorFlow adapter APIs import without loading heavy stacks", _claim_framework_adapter_import_safety),
+        _record("Visual topology gallery documents active Mapper, sheaf, and cover prototypes", _claim_visual_topology_gallery_docs),
         _record("GUI exporter writes a self-contained topology dashboard", _claim_dashboard_export),
         _record("Backend metadata separates active code from planned acceleration", _claim_backend_contract),
         _record("Planned backend source files exist for CUDA, ASM, C++, and Triton", _claim_backend_source_inventory),

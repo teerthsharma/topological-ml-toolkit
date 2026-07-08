@@ -43,6 +43,9 @@ nav:
       - Overview: gallery/index.md
       - Noisy Circles: gallery/noisy-circles.md
       - Time Delay: gallery/time-delay.md
+      - Mapper And Reeb Activation Maps: gallery/mapper-reeb-activation-map.md
+      - Sheaf Consistency Residuals: gallery/sheaf-consistency-residuals.md
+      - Covers Nerves And Routing: gallery/covers-nerves-routing.md
   - Benchmarks:
       - Benchmark Policy: benchmarks/index.md
       - E2E Claim Gate: benchmarks/e2e-claims.md
