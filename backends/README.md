@@ -13,6 +13,20 @@ by the public package until correctness and benchmark gates pass.
 - `cpp/topoml_native.cpp`: portable C++ C-ABI distance and threshold routines.
 - `triton/topology_distance.py`: optional Triton JIT pairwise distance prototype.
 
+## Current Native C++ Smoke Gate
+
+The C++ backend now has a build-tested preprocessing gate:
+
+- `python/topoml/native.py` compiles `cpp/topoml_native.cpp` into a shared library
+  and loads it with `ctypes`.
+- `python/tests/test_cpp_native_ctypes.py` verifies pairwise L2 distances and
+  threshold edges against NumPy.
+- `benchmarks/benchmark_native_distance.py` emits JSON timing artifacts.
+- CI runs this on Ubuntu in the `native C++ smoke` job.
+
+This is not yet a persistent-homology acceleration claim. It proves the portable
+C ABI can be built and called correctly for preprocessing.
+
 ## Backend Metadata
 
 Every backend must report:

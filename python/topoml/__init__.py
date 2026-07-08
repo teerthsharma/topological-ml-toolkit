@@ -28,6 +28,13 @@ from .features import (
 )
 from .families import TopologyFamily, topology_families, topology_family, topology_family_coverage_matrix
 from .gui import write_dashboard
+from .native import (
+    CppNativeBackend,
+    NativeBackendUnavailable,
+    NativeBuildResult,
+    build_cpp_native_backend,
+    load_cpp_native_backend,
+)
 from .tensor import (
     TensorAlgebraElement,
     TensorBundleSpec,
@@ -61,6 +68,9 @@ __all__ = [
     "CoverCell",
     "MapperGraph",
     "NerveGraph",
+    "CppNativeBackend",
+    "NativeBackendUnavailable",
+    "NativeBuildResult",
     "PHFeaturizer",
     "PersistenceDiagram",
     "PersistencePair",
@@ -76,10 +86,12 @@ __all__ = [
     "available_backends",
     "backend_adapter",
     "backend_adapters",
+    "build_cpp_native_backend",
     "bundle_metric_matrix",
     "graph_signature",
     "interop_add",
     "interop_bundle",
+    "load_cpp_native_backend",
     "mapper_graph",
     "metric_cover",
     "nerve_graph",

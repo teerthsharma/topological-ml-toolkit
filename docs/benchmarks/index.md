@@ -45,3 +45,16 @@ into the current topology stack. The persistent homology reduction is still CPU
 reference code, so the artifact separates `cuda_ms` from `cpu_topology_ms`.
 
 The script exits instead of producing fake data when CUDA is unavailable.
+
+## Native C++ Distance Benchmark
+
+Ubuntu CI runs a native C++ preprocessing smoke benchmark:
+
+```powershell
+python benchmarks/benchmark_native_distance.py --out artifacts/native-distance.json --points 8 16
+```
+
+This compiles the portable C++ C ABI, loads it through `ctypes`, compares
+pairwise distances and threshold edges against NumPy, and writes timing evidence.
+It is a preprocessing correctness/timing smoke, not a persistent-homology
+acceleration claim.
