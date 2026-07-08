@@ -1,5 +1,7 @@
 # Topological ML Toolkit
 
+![Topological ML Toolkit repo image](assets/topological-ml-toolkit-seal.jpeg)
+
 Topological ML Toolkit teaches and implements topology as an engineering tool
 for machine learning pipelines.
 
@@ -29,6 +31,9 @@ flowchart LR
 - Plotly-shaped persistence diagram traces.
 - `PHFeaturizer`, a sklearn-style transformer that emits fixed-width Betti
   curves.
+- TensorBundle-style interoperability descriptors for explicit metric spaces.
+- Topology-augmented training helpers, sample weights, and a dependency-light
+  random-forest baseline.
 - Generated diagrams for docs and tutorials.
 - E2E claim benchmarks that verify active behavior.
 
@@ -44,10 +49,12 @@ do not claim acceleration until equivalence tests and benchmark baselines pass.
    lifetimes.
 2. Convert diagrams into Betti curves and fixed-width feature vectors.
 3. Use manifold and embedding docs to connect topology to model activations.
-4. Read the topology landscape for broader families such as covers, Mapper,
+4. Use topological training to append shape features to tabular, tensor, or
+   embedding pipelines.
+5. Read the topology landscape for broader families such as covers, Mapper,
    sheaves, homotopy, dynamical topology, stratified spaces, and quotient
    spaces.
-5. Check the benchmark pages before trusting any speed or backend claim.
+6. Check the benchmark pages before trusting any speed or backend claim.
 
 ## Evidence Policy
 

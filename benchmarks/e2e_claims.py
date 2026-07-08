@@ -208,6 +208,51 @@ def _claim_topology_prototypes() -> dict:
     }
 
 
+def _claim_tensor_bundle_and_training_surface() -> dict:
+    xy = topoml.TensorBundleSpec(("x", "y"), (1.0, 1.0))
+    yz = topoml.TensorBundleSpec(("y", "z"), (1.0, -1.0), tangent_order=1, tangent_variables=2)
+    ambient = topoml.interop_bundle(xy, yz)
+    summed = topoml.interop_add(
+        topoml.TensorAlgebraElement(xy, np.array([1.0, 2.0])),
+        topoml.TensorAlgebraElement(yz, np.array([3.0, 4.0])),
+    )
+
+    clouds = [
+        np.array([[0.0, 0.0], [0.1, 0.0], [5.0, 0.0]], dtype=float),
+        np.array([[0.0, 0.0], [0.2, 0.0], [0.4, 0.0]], dtype=float),
+        np.array([[1.0, 1.0], [1.1, 1.0], [8.0, 1.0]], dtype=float),
+        np.array([[1.0, 1.0], [1.2, 1.0], [1.4, 1.0]], dtype=float),
+    ]
+    labels = np.array(["separated", "connected", "separated", "connected"], dtype=object)
+    augmenter = topoml.TopologyAugmenter(radii=[0.0, 0.15, 1.0], max_dim=0)
+    augmented = augmenter.fit_transform(clouds)
+    weights = topoml.topological_sample_weights(clouds, radii=[0.0, 0.15, 1.0], max_dim=0)
+    model = topoml.TopologyRandomForestClassifier(
+        n_estimators=15,
+        max_features=2,
+        radii=[0.0, 0.15, 1.0],
+        max_dim=0,
+        random_state=7,
+    )
+    model.fit(clouds, labels, sample_weight=weights)
+    score = model.score(clouds, labels)
+
+    assert ambient.basis == ("x", "y", "z")
+    assert summed.coordinates.tolist() == [1.0, 5.0, 4.0]
+    assert augmented.shape == (4, 3)
+    assert np.isclose(weights.mean(), 1.0)
+    assert score == 1.0
+    return {
+        "ambient_basis": list(ambient.basis),
+        "ambient_metric": list(ambient.metric),
+        "summed_coordinates": summed.coordinates.tolist(),
+        "augmented_shape": list(augmented.shape),
+        "sample_weights": weights.tolist(),
+        "training_score": score,
+        "claim_scope": "dependency-light topology training baseline, not a deep-learning speedup claim",
+    }
+
+
 def _claim_dashboard_export() -> dict:
     points = np.array([[0.0, 0.0], [0.2, 0.0], [1.0, 0.0]], dtype=float)
     diagram = topoml.persistent_homology(points, max_dim=0, max_radius=2.0)
@@ -242,6 +287,10 @@ def run_claims() -> list[ClaimResult]:
             _claim_feature_encoders_and_signatures,
         ),
         _record("Topology prototype APIs build covers, Mapper edges, and sheaf residuals", _claim_topology_prototypes),
+        _record(
+            "TensorBundle interoperability and topology-aware training baseline execute",
+            _claim_tensor_bundle_and_training_surface,
+        ),
         _record("GUI exporter writes a self-contained topology dashboard", _claim_dashboard_export),
         _record("Backend metadata separates active code from planned acceleration", _claim_backend_contract),
         _record("Planned backend source files exist for CUDA, ASM, C++, and Triton", _claim_backend_source_inventory),

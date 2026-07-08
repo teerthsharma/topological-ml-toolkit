@@ -109,6 +109,62 @@ and graph cycle rank:
 \beta_1(G) = |E| - |V| + c
 \]
 
+### TensorBundle interoperability
+
+`TensorBundleSpec` describes a runtime tensor or vector space by basis labels,
+diagonal metric values, tangent order, tangent-variable count, and dual status.
+
+```python
+xy = topoml.TensorBundleSpec(("x", "y"), (1.0, 1.0))
+yz = topoml.TensorBundleSpec(("y", "z"), (1.0, -1.0), tangent_order=1)
+ambient = topoml.interop_bundle(xy, yz)
+```
+
+The default interoperability rule is a union morphism:
+
+\[
+V_{xy} \cup V_{yz} = V_{xyz}
+\]
+
+`TensorAlgebraElement` stores dense coordinates tied to a bundle. `interop_add`
+coerces mixed-space elements into the ambient bundle before addition:
+
+```python
+a = topoml.TensorAlgebraElement(xy, np.array([1.0, 2.0]))
+b = topoml.TensorAlgebraElement(yz, np.array([3.0, 4.0]))
+summed = topoml.interop_add(a, b)
+```
+
+`tensor_bundle_signature_features(bundle)` returns numeric metadata such as
+rank, positive axes, negative axes, degenerate axes, tangent order, and dual
+status.
+
+### Topology-aware training
+
+`TopologyAugmenter` appends persistent-homology features to ordinary ML feature
+matrices:
+
+```python
+augmenter = topoml.TopologyAugmenter(radii=[0.0, 0.25, 0.5], max_dim=1)
+features = augmenter.fit_transform(point_clouds, base_features=tabular_features)
+```
+
+`topological_sample_weights` returns mean-one weights from Betti-curve mass and
+variation. The weights can be used as a pretraining or tabular-learning prior:
+
+```python
+weights = topoml.topological_sample_weights(point_clouds, radii=[0.0, 0.5, 1.0])
+```
+
+`TopologyRandomForestClassifier` is an executable dependency-light baseline. It
+trains weighted random decision stumps on topology-augmented features:
+
+```python
+model = topoml.TopologyRandomForestClassifier(radii=[0.0, 0.5, 1.0], max_dim=1)
+model.fit(point_clouds, labels, base_features=tabular_features)
+predicted = model.predict(point_clouds, base_features=tabular_features)
+```
+
 ### Backend adapters
 
 `topoml.backend_adapters()` returns API-level backend contracts for active and

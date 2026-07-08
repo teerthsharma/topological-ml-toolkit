@@ -3,6 +3,7 @@ site_description: Graph-first persistent homology and manifold embedding docs fo
 repo_url: https://github.com/teerthsharma/topological-ml-toolkit
 theme:
   name: material
+  logo: assets/topological-ml-toolkit-seal.jpeg
   features:
     - navigation.sections
     - navigation.tabs
@@ -27,6 +28,7 @@ nav:
       - Topology Landscape: concepts/topology-landscape.md
       - Manifold Embeddings: concepts/manifold-embeddings.md
       - Feature Vectors: concepts/ph-feature-vectors.md
+      - Topological Training: concepts/topological-training.md
       - Performance Gates: concepts/performance-gates.md
   - Topology:
       - Foundations: topology/foundations.md

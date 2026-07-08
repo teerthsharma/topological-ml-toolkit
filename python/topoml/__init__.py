@@ -27,6 +27,14 @@ from .features import (
     point_cloud_signature,
 )
 from .gui import write_dashboard
+from .tensor import (
+    TensorAlgebraElement,
+    TensorBundleSpec,
+    bundle_metric_matrix,
+    interop_add,
+    interop_bundle,
+    tensor_bundle_signature_features,
+)
 from .topology import (
     Cover,
     CoverCell,
@@ -39,6 +47,7 @@ from .topology import (
     nerve_graph,
     sheaf_consistency_residual,
 )
+from .training import TopologyAugmenter, TopologyRandomForestClassifier, topological_sample_weights
 
 __all__ = [
     "BackendAdapter",
@@ -56,12 +65,19 @@ __all__ = [
     "PersistencePair",
     "PersistenceImage",
     "SheafResidual",
+    "TensorAlgebraElement",
+    "TensorBundleSpec",
     "TopologySignature",
+    "TopologyAugmenter",
+    "TopologyRandomForestClassifier",
     "activation_signature",
     "available_backends",
     "backend_adapter",
     "backend_adapters",
+    "bundle_metric_matrix",
     "graph_signature",
+    "interop_add",
+    "interop_bundle",
     "mapper_graph",
     "metric_cover",
     "nerve_graph",
@@ -70,6 +86,8 @@ __all__ = [
     "select_backend",
     "select_backend_adapter",
     "sheaf_consistency_residual",
+    "tensor_bundle_signature_features",
     "time_delay_embedding",
+    "topological_sample_weights",
     "write_dashboard",
 ]

@@ -1,5 +1,7 @@
 # Topological ML Toolkit
 
+![Topological ML Toolkit repo image](docs/assets/topological-ml-toolkit-seal.jpeg)
+
 Topological ML Toolkit is a Rust and Python library for turning the shape of
 data into features, diagnostics, and benchmarked ML pipeline components.
 
@@ -63,6 +65,10 @@ Python package: `topoml`
 - `BettiCurve(radii, homology_dims)`
 - `PersistenceImage(width, height, sigma)`
 - `point_cloud_signature`, `graph_signature`, and `activation_signature`
+- `TensorBundleSpec`, `TensorAlgebraElement`, `interop_bundle`, and
+  `interop_add` for explicit tensor-space interoperability rules
+- `TopologyAugmenter`, `topological_sample_weights`, and
+  `TopologyRandomForestClassifier` for topology-augmented training baselines
 - `metric_cover(points, radius)` and `nerve_graph(cover)`
 - `mapper_graph(points, filter_values, intervals, overlap, cluster_radius)`
 - `sheaf_consistency_residual(sections, restrictions)`
@@ -124,6 +130,27 @@ topoml.write_dashboard(
     feature_matrix=features,
     metadata={"dataset": "example"},
 )
+```
+
+Topology-aware training baseline:
+
+```python
+model = topoml.TopologyRandomForestClassifier(
+    radii=[0.0, 0.25, 0.5, 1.0],
+    max_dim=1,
+    random_state=7,
+)
+model.fit(point_clouds, labels, base_features=tabular_features)
+print(model.score(point_clouds, labels, base_features=tabular_features))
+```
+
+Tensor-space interoperability:
+
+```python
+xy = topoml.TensorBundleSpec(("x", "y"), (1.0, 1.0))
+yz = topoml.TensorBundleSpec(("y", "z"), (1.0, -1.0))
+ambient = topoml.interop_bundle(xy, yz)
+print(ambient.basis)  # ("x", "y", "z")
 ```
 
 ## Backend Roadmap

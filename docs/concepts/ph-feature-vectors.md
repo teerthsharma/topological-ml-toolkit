@@ -128,3 +128,35 @@ A topological feature encoder should declare:
 - output shape;
 - backend used;
 - benchmark artifact proving active claims.
+
+## Training And Pretraining Weights
+
+Topology can enter training in three practical ways:
+
+1. append topological features to ordinary features;
+2. weight examples whose shape changes strongly across the chosen filtration;
+3. compare against a simple topology-aware baseline before claiming deep-model
+   improvement.
+
+The active Python API supports all three:
+
+```python
+augmenter = topoml.TopologyAugmenter(radii=[0.0, 0.25, 0.5, 1.0], max_dim=1)
+features = augmenter.fit_transform(point_clouds, base_features=tabular_features)
+
+weights = topoml.topological_sample_weights(point_clouds, radii=[0.0, 0.25, 0.5, 1.0])
+
+forest = topoml.TopologyRandomForestClassifier(radii=[0.0, 0.25, 0.5, 1.0], max_dim=1)
+forest.fit(point_clouds, labels, base_features=tabular_features, sample_weight=weights)
+```
+
+The current sample-weight formula is:
+
+\[
+w_i = \frac{1 + \|f_i\|_1 + \sum_j |f_{i,j+1} - f_{i,j}|}
+{\frac{1}{N}\sum_k \left(1 + \|f_k\|_1 + \sum_j |f_{k,j+1} - f_{k,j}|\right)}
+\]
+
+where \(f_i\) is the Betti-curve feature vector for sample \(i\). This gives a
+mean-one prior that emphasizes examples with more topological mass or stronger
+filtration changes.
