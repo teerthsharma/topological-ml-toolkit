@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "topological-ml-toolkit"
+version = "0.1.0"
+description = "Graph-first persistent homology and manifold embedding toolkit for ML practitioners"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Topological ML Toolkit Contributors" }]
+dependencies = [
+    "numpy>=1.24",
+    "matplotlib>=3.7",
+]
+
+[project.optional-dependencies]
+docs = [
+    "mkdocs-material>=9.5",
+    "mkdocs-awesome-pages-plugin>=2.9",
+]
+ml = [
+    "torch>=2.2",
+    "tensorflow>=2.15",
+]
+bench = [
+    "ripser>=0.6",
+    "scikit-learn>=1.3",
+    "pandas>=2.0",
+]
+test = [
+    "pytest>=7.4",
+]
+
+[tool.setuptools.packages.find]
+where = ["python"]
+
+[tool.pytest.ini_options]
+testpaths = ["python/tests"]
+

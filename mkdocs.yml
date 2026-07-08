@@ -1,0 +1,40 @@
+site_name: Topological ML Toolkit
+site_description: Graph-first persistent homology and manifold embedding docs for ML practitioners.
+repo_url: https://github.com/teerthsharma/topological-ml-toolkit
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.tabs
+    - content.code.copy
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+nav:
+  - Home: index.md
+  - Concepts:
+      - Persistent Homology: concepts/persistent-homology.md
+      - Manifold Embeddings: concepts/manifold-embeddings.md
+      - Feature Vectors: concepts/ph-feature-vectors.md
+      - Performance Gates: concepts/performance-gates.md
+  - Gallery:
+      - Overview: gallery/index.md
+      - Noisy Circles: gallery/noisy-circles.md
+      - Time Delay: gallery/time-delay.md
+  - Benchmarks:
+      - Benchmark Policy: benchmarks/index.md
+  - Backends:
+      - Backend Roadmap: backends/roadmap.md
+  - Reference:
+      - API: reference/api.md
+      - Contribution Standard: reference/contributing.md

@@ -1,0 +1,21 @@
+[package]
+name = "topoml-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "no_std-friendly persistent homology and topological embedding primitives for ML"
+
+[lib]
+name = "topoml_core"
+path = "src/lib.rs"
+
+[features]
+default = ["std"]
+std = []
+asm-backend = []
+
+[dependencies]
+libm = "0.2"
+
