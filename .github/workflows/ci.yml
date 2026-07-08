@@ -3,22 +3,98 @@ name: ci
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  rust:
+    name: rust / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt, clippy
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy -p topoml-core --all-targets -- -D warnings
+      - name: Tests
+        run: cargo test -p topoml-core
+      - name: no_std check
+        run: cargo check -p topoml-core --no-default-features
+
+  python:
+    name: python / ${{ matrix.os }} / ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install package
+        run: python -m pip install -e ".[test]"
+      - name: Python tests
+        run: python -m pytest python/tests -q
+      - name: Import guard
+        run: |
+          python -c "import sys, topoml; loaded = {'torch', 'tensorflow', 'triton'}.intersection(sys.modules); assert not loaded, f'heavy optional modules imported at topoml import: {loaded}'; print(topoml.__all__)"
+
+  docs:
+    name: docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install Python test deps
-        run: python -m pip install -e ".[test]"
-      - name: Rust tests
-        run: cargo test -p topoml-core
-      - name: Python tests
-        run: PYTHONPATH=python python -m pytest python/tests -q
+          cache: pip
+      - name: Install docs deps
+        run: python -m pip install -e ".[docs,test]"
       - name: Generate docs graphs
-        run: PYTHONPATH=python python scripts/generate_gallery.py
+        run: python scripts/generate_gallery.py
+      - name: Strict docs build
+        run: mkdocs build --strict
+      - name: Upload docs site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mkdocs-site
+          path: site
 
+  benchmark-smoke:
+    name: benchmark smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install package
+        run: python -m pip install -e ".[test]"
+      - name: Python benchmark smoke
+        run: python benchmarks/benchmark_python.py --out artifacts/python-ph.json --points 8 16
+      - name: E2E active claim benchmark
+        run: python benchmarks/e2e_claims.py --json-out artifacts/e2e-claims.json --md-out artifacts/e2e-claims.md
+      - name: Upload benchmark artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-and-claim-artifacts
+          path: artifacts/
+
+  ci-summary:
+    name: ci summary
+    runs-on: ubuntu-latest
+    needs: [rust, python, docs, benchmark-smoke]
+    steps:
+      - name: Summary
+        run: echo "Rust, Python, docs, and benchmark smoke gates passed."

@@ -7,6 +7,164 @@ use alloc::vec::Vec;
 
 const SIMPLEX_VERTICES: usize = 4;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BackendId {
+    SafeRust,
+    Cpp,
+    AsmAvx512,
+    Triton,
+    PyTorch,
+    TensorFlow,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BackendCapability {
+    PersistentHomology,
+    TimeDelayEmbedding,
+    NativeExtension,
+    SimdAcceleration,
+    FrameworkAdapter,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BackendWarning {
+    PlannedOnly,
+    MissingImplementation,
+    CpuidGate,
+    CorrectnessGate,
+    OptionalDependency,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct BackendMetadata {
+    pub id: BackendId,
+    pub name: &'static str,
+    pub active: bool,
+    pub available: bool,
+    pub planned: bool,
+    pub capabilities: &'static [BackendCapability],
+    pub gates: &'static [&'static str],
+    pub warnings: &'static [BackendWarning],
+}
+
+const SAFE_RUST_CAPABILITIES: &[BackendCapability] = &[
+    BackendCapability::PersistentHomology,
+    BackendCapability::TimeDelayEmbedding,
+];
+const CPP_CAPABILITIES: &[BackendCapability] = &[
+    BackendCapability::PersistentHomology,
+    BackendCapability::NativeExtension,
+];
+const ASM_AVX512_CAPABILITIES: &[BackendCapability] = &[BackendCapability::SimdAcceleration];
+const FRAMEWORK_CAPABILITIES: &[BackendCapability] = &[BackendCapability::FrameworkAdapter];
+
+const NO_GATES: &[&str] = &[];
+const CPP_GATES: &[&str] = &["portable C ABI", "barcode equivalence"];
+const ASM_AVX512_GATES: &[&str] = &["CPUID AVX-512 support", "barcode equivalence"];
+const TRITON_GATES: &[&str] = &[
+    "optional triton dependency",
+    "dense SDPA/FlashAttention baseline",
+    "same-budget ablations",
+];
+const PYTORCH_GATES: &[&str] = &[
+    "optional torch dependency",
+    "dense fallback",
+    "torch.compile-safe behavior",
+];
+const TENSORFLOW_GATES: &[&str] = &[
+    "optional tensorflow dependency",
+    "eager parity",
+    "graph-mode parity",
+];
+
+const NO_WARNINGS: &[BackendWarning] = &[];
+const PLANNED_WARNINGS: &[BackendWarning] = &[
+    BackendWarning::PlannedOnly,
+    BackendWarning::MissingImplementation,
+];
+const ASM_AVX512_WARNINGS: &[BackendWarning] = &[
+    BackendWarning::PlannedOnly,
+    BackendWarning::MissingImplementation,
+    BackendWarning::CpuidGate,
+    BackendWarning::CorrectnessGate,
+];
+const OPTIONAL_FRAMEWORK_WARNINGS: &[BackendWarning] = &[
+    BackendWarning::PlannedOnly,
+    BackendWarning::MissingImplementation,
+    BackendWarning::OptionalDependency,
+];
+
+pub const BACKEND_METADATA: &[BackendMetadata] = &[
+    BackendMetadata {
+        id: BackendId::SafeRust,
+        name: "safe_rust",
+        active: true,
+        available: true,
+        planned: false,
+        capabilities: SAFE_RUST_CAPABILITIES,
+        gates: NO_GATES,
+        warnings: NO_WARNINGS,
+    },
+    BackendMetadata {
+        id: BackendId::Cpp,
+        name: "cpp",
+        active: false,
+        available: false,
+        planned: true,
+        capabilities: CPP_CAPABILITIES,
+        gates: CPP_GATES,
+        warnings: PLANNED_WARNINGS,
+    },
+    BackendMetadata {
+        id: BackendId::AsmAvx512,
+        name: "asm_avx512",
+        active: false,
+        available: false,
+        planned: true,
+        capabilities: ASM_AVX512_CAPABILITIES,
+        gates: ASM_AVX512_GATES,
+        warnings: ASM_AVX512_WARNINGS,
+    },
+    BackendMetadata {
+        id: BackendId::Triton,
+        name: "triton",
+        active: false,
+        available: false,
+        planned: true,
+        capabilities: FRAMEWORK_CAPABILITIES,
+        gates: TRITON_GATES,
+        warnings: OPTIONAL_FRAMEWORK_WARNINGS,
+    },
+    BackendMetadata {
+        id: BackendId::PyTorch,
+        name: "pytorch",
+        active: false,
+        available: false,
+        planned: true,
+        capabilities: FRAMEWORK_CAPABILITIES,
+        gates: PYTORCH_GATES,
+        warnings: OPTIONAL_FRAMEWORK_WARNINGS,
+    },
+    BackendMetadata {
+        id: BackendId::TensorFlow,
+        name: "tensorflow",
+        active: false,
+        available: false,
+        planned: true,
+        capabilities: FRAMEWORK_CAPABILITIES,
+        gates: TENSORFLOW_GATES,
+        warnings: OPTIONAL_FRAMEWORK_WARNINGS,
+    },
+];
+
+pub fn backend_metadata(id: BackendId) -> Option<&'static BackendMetadata> {
+    BACKEND_METADATA.iter().find(|backend| backend.id == id)
+}
+
+pub fn select_backend(id: BackendId) -> Option<&'static BackendMetadata> {
+    backend_metadata(id).filter(|backend| backend.active && backend.available)
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct PointCloud<const D: usize> {
     points: Vec<[f64; D]>,
@@ -259,8 +417,8 @@ fn select_landmarks<const D: usize>(
     while landmarks.len() < max_landmarks {
         let mut best_idx = None;
         let mut best_distance = -1.0;
-        for idx in 0..cloud.len() {
-            if selected[idx] {
+        for (idx, is_selected) in selected.iter().enumerate() {
+            if *is_selected {
                 continue;
             }
             let nearest = landmarks

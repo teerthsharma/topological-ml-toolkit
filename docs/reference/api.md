@@ -57,15 +57,46 @@ Returns a dictionary shaped for Plotly scatter charts.
 
 Returns a NumPy array of delay vectors.
 
+### `topoml.PHFeaturizer(max_dim=1, radii=None, homology_dims=None)`
+
+sklearn-style transformer that converts a batch of point clouds into a fixed
+NumPy feature matrix.
+
+```python
+features = topoml.PHFeaturizer(max_dim=0, radii=[0.0, 0.5, 1.0]).fit_transform(clouds)
+```
+
+The current active encoding is a Betti curve sampler:
+
+\[
+f = [\beta_0(r_1), \ldots, \beta_0(r_n), \beta_1(r_1), \ldots]
+\]
+
+### Backend adapters
+
+`topoml.backend_adapters()` returns API-level backend contracts for active and
+planned backends. Planned backends are discoverable but unavailable until their
+correctness and benchmark gates pass.
+
+```python
+result = topoml.select_backend_adapter("triton", raise_unavailable=False)
+print(result.available)
+print(result.missing_gates)
+```
+
+Strict selection raises `BackendUnavailableError` for a planned backend:
+
+```python
+topoml.select_backend_adapter("asm_avx512")
+```
+
 ## Planned Public APIs
 
 These are not shipped yet. They are design commitments with gates:
 
-- `PHFeaturizer`: sklearn-compatible transformer.
 - `BettiCurve`: fixed vector curve sampler.
 - `PersistenceImage`: image feature encoder.
 - `TopologySignature`: backend-independent feature summary.
 - `TorchActivationCapture`: PyTorch adapter.
 - `TensorFlowActivationCapture`: TensorFlow adapter.
 - `TritonScheduleBuilder`: topology-derived sparse schedule builder.
-

@@ -1,6 +1,6 @@
 # Performance Gates
 
-Speed is not a vibe. Speed is a measured claim.
+Performance claims require measured evidence.
 
 ## Required Baselines
 
@@ -31,5 +31,5 @@ Promotion requires:
 
 ## Claim Policy
 
-A README speed claim must point to raw benchmark output. No artifact, no claim.
-
+A README speed claim must point to raw benchmark output. Do not publish a speed
+claim without raw benchmark output and the script that produced it.

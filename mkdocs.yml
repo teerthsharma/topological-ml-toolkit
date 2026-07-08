@@ -28,12 +28,18 @@ nav:
       - Manifold Embeddings: concepts/manifold-embeddings.md
       - Feature Vectors: concepts/ph-feature-vectors.md
       - Performance Gates: concepts/performance-gates.md
+  - Topology:
+      - Foundations: topology/foundations.md
+      - Metric And Function Spaces: topology/metric-and-function-spaces.md
+      - Systems Topology: topology/systems-topology.md
+      - Geometry And Symmetry: topology/geometry-and-symmetry.md
   - Gallery:
       - Overview: gallery/index.md
       - Noisy Circles: gallery/noisy-circles.md
       - Time Delay: gallery/time-delay.md
   - Benchmarks:
       - Benchmark Policy: benchmarks/index.md
+      - E2E Claim Gate: benchmarks/e2e-claims.md
   - Backends:
       - Backend Roadmap: backends/roadmap.md
   - Reference:

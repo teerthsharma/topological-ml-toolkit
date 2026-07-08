@@ -8,6 +8,104 @@ import numpy as np
 
 
 @dataclass(frozen=True)
+class BackendMetadata:
+    id: str
+    name: str
+    active: bool
+    available: bool
+    planned: bool
+    capabilities: tuple[str, ...]
+    gates: tuple[str, ...] = ()
+    warnings: tuple[str, ...] = ()
+
+
+_BACKEND_METADATA: tuple[BackendMetadata, ...] = (
+    BackendMetadata(
+        id="safe_rust",
+        name="Safe Rust",
+        active=True,
+        available=True,
+        planned=False,
+        capabilities=("persistent_homology", "time_delay_embedding"),
+    ),
+    BackendMetadata(
+        id="python_reference",
+        name="Python reference",
+        active=True,
+        available=True,
+        planned=False,
+        capabilities=("persistent_homology", "time_delay_embedding"),
+    ),
+    BackendMetadata(
+        id="cpp",
+        name="C++",
+        active=False,
+        available=False,
+        planned=True,
+        capabilities=("persistent_homology", "native_extension"),
+        gates=("portable C ABI", "barcode equivalence"),
+        warnings=("planned only", "missing implementation"),
+    ),
+    BackendMetadata(
+        id="asm_avx512",
+        name="ASM AVX-512",
+        active=False,
+        available=False,
+        planned=True,
+        capabilities=("simd_acceleration",),
+        gates=("CPUID AVX-512 support", "barcode correctness equivalence"),
+        warnings=("planned only", "missing implementation", "CPUID gate", "correctness gate"),
+    ),
+    BackendMetadata(
+        id="triton",
+        name="Triton",
+        active=False,
+        available=False,
+        planned=True,
+        capabilities=("framework_adapter",),
+        gates=(
+            "optional triton dependency",
+            "dense SDPA/FlashAttention baseline",
+            "same-budget ablations",
+        ),
+        warnings=("planned only", "missing implementation", "optional dependency"),
+    ),
+    BackendMetadata(
+        id="pytorch",
+        name="PyTorch",
+        active=False,
+        available=False,
+        planned=True,
+        capabilities=("framework_adapter",),
+        gates=("optional torch dependency", "dense fallback", "torch.compile-safe behavior"),
+        warnings=("planned only", "missing implementation", "optional dependency"),
+    ),
+    BackendMetadata(
+        id="tensorflow",
+        name="TensorFlow",
+        active=False,
+        available=False,
+        planned=True,
+        capabilities=("framework_adapter",),
+        gates=("optional tensorflow dependency", "eager parity", "graph-mode parity"),
+        warnings=("planned only", "missing implementation", "optional dependency"),
+    ),
+)
+
+
+def available_backends() -> tuple[BackendMetadata, ...]:
+    return _BACKEND_METADATA
+
+
+def select_backend(name: str) -> BackendMetadata | None:
+    normalized = name.strip().lower().replace("-", "_")
+    for backend in _BACKEND_METADATA:
+        if backend.id == normalized and backend.active and backend.available:
+            return backend
+    return None
+
+
+@dataclass(frozen=True)
 class BettiNumbers:
     beta0: int = 0
     beta1: int = 0
@@ -166,4 +264,3 @@ def _xor_sorted(left: list[int], right: list[int]) -> list[int]:
             i += 1
             j += 1
     return out
-

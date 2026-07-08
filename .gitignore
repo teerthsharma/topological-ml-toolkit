@@ -3,6 +3,7 @@
 /dist/
 /build/
 /site/
+.superpowers/
 *.egg-info/
 __pycache__/
 .pytest_cache/

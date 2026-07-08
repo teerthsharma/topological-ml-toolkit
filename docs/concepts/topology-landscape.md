@@ -2,15 +2,14 @@
 
 The current toolkit starts with topological data analysis: point clouds,
 Vietoris-Rips filtrations, Betti numbers, persistence diagrams, and time-delay
-embeddings. That is useful, but it is not all of topology.
+embeddings. That is useful, but it is only one part of topology.
 
-This page is the expansion map. It records what Aether/Epsilon already cover,
-what they mostly miss, and how each missing family can become accessible to ML
-and systems engineers.
+This page is the expansion map. It records the major topology families the
+toolkit should teach, prototype, or eventually support as stable APIs.
 
 ## What The Current Stack Covers
 
-The existing Aether/Epsilon material is strongest in:
+The current code and documentation are strongest in:
 
 - persistent homology over bounded Vietoris-Rips and witness complexes;
 - Betti numbers for connected components, loops, and voids;
@@ -18,7 +17,7 @@ The existing Aether/Epsilon material is strongest in:
 - spherical and hyperbolic locality;
 - Voronoi-style routing and memory layout;
 - spectral contraction and Lyapunov-style stability language;
-- topology-flavored OS scheduling, memory, and KV-cache placement.
+- topology-guided scheduling and routing as roadmap material.
 
 That is a strong base, but it overrepresents "holes in point clouds" and
 underrepresents topology as a full language of continuity, covers, maps,
@@ -89,4 +88,3 @@ Every new topology family must answer five questions before implementation:
 
 If any answer is missing, the family stays in docs or gallery until it earns
 code.
-
