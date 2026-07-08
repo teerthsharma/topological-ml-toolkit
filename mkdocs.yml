@@ -24,6 +24,7 @@ nav:
   - Home: index.md
   - Concepts:
       - Persistent Homology: concepts/persistent-homology.md
+      - Topology Landscape: concepts/topology-landscape.md
       - Manifold Embeddings: concepts/manifold-embeddings.md
       - Feature Vectors: concepts/ph-feature-vectors.md
       - Performance Gates: concepts/performance-gates.md
