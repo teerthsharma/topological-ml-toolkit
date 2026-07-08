@@ -1,7 +1,5 @@
 # Topological ML Toolkit
 
-![Topological ML Toolkit repo image](docs/assets/topological-ml-toolkit-seal.jpeg)
-
 Topological ML Toolkit is a Rust and Python library for turning the shape of
 data into features, diagnostics, and benchmarked ML pipeline components.
 
