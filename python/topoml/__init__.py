@@ -26,6 +26,7 @@ from .features import (
     activation_signature,
     point_cloud_signature,
 )
+from .families import TopologyFamily, topology_families, topology_family, topology_family_coverage_matrix
 from .gui import write_dashboard
 from .tensor import (
     TensorAlgebraElement,
@@ -69,6 +70,7 @@ __all__ = [
     "TensorBundleSpec",
     "TopologySignature",
     "TopologyAugmenter",
+    "TopologyFamily",
     "TopologyRandomForestClassifier",
     "activation_signature",
     "available_backends",
@@ -88,6 +90,9 @@ __all__ = [
     "sheaf_consistency_residual",
     "tensor_bundle_signature_features",
     "time_delay_embedding",
+    "topology_families",
+    "topology_family",
+    "topology_family_coverage_matrix",
     "topological_sample_weights",
     "write_dashboard",
 ]

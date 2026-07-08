@@ -55,6 +55,18 @@ Gate:
 Adapters, not core dependencies. Use tensor exchange and model activation capture
 without forcing heavy frameworks onto basic users.
 
+Current API:
+
+- `topoml.adapters.TorchTensorAdapter`
+- `topoml.adapters.TorchActivationCapture`
+- `topoml.adapters.TensorFlowTensorAdapter`
+- `topoml.adapters.TensorFlowActivationCapture`
+
+The adapters convert framework tensors to NumPy-backed topology inputs and
+return topology signatures. They preserve dtype/device where the framework
+allows it and keep import guards strict: importing `topoml` does not import
+`torch` or `tensorflow`.
+
 Current benchmark: `benchmarks/benchmark_cuda_tensors.py` uses real CUDA tensors
 through PyTorch, times GPU projection and distance work with CUDA events, and
 then runs the current topology reduction on the selected activation cloud.

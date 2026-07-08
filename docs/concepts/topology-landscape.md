@@ -7,6 +7,9 @@ embeddings. That is useful, but it is only one part of topology.
 This page is the expansion map. It records the major topology families the
 toolkit should teach, prototype, or eventually support as stable APIs.
 
+For an auditable status table, see
+[Topology Family Coverage Matrix](../topology/family-coverage-matrix.md).
+
 ## What The Current Stack Covers
 
 The current code and documentation are strongest in:

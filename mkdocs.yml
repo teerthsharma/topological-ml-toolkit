@@ -1,5 +1,6 @@
 site_name: Topological ML Toolkit
 site_description: Graph-first persistent homology and manifold embedding docs for ML practitioners.
+site_url: https://teerthsharma.github.io/topological-ml-toolkit/
 repo_url: https://github.com/teerthsharma/topological-ml-toolkit
 theme:
   name: material
@@ -32,6 +33,7 @@ nav:
       - Performance Gates: concepts/performance-gates.md
   - Topology:
       - Foundations: topology/foundations.md
+      - Family Coverage Matrix: topology/family-coverage-matrix.md
       - Metric And Function Spaces: topology/metric-and-function-spaces.md
       - Systems Topology: topology/systems-topology.md
       - Geometry And Symmetry: topology/geometry-and-symmetry.md

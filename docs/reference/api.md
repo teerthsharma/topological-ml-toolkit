@@ -183,6 +183,44 @@ Strict selection raises `BackendUnavailableError` for a planned backend:
 topoml.select_backend_adapter("asm_avx512")
 ```
 
+### Framework tensor adapters
+
+PyTorch and TensorFlow adapters are optional. Importing `topoml` does not import
+`torch` or `tensorflow`; the adapters load those frameworks only when conversion
+or capture methods run.
+
+```python
+from topoml.adapters import TorchTensorAdapter, TensorFlowTensorAdapter
+
+torch_sig = TorchTensorAdapter().activation_signature(torch_activations, radii=[0.0, 1.0], max_dim=0)
+tf_sig = TensorFlowTensorAdapter().activation_signature(tf_activations, radii=[0.0, 1.0], max_dim=0)
+```
+
+Capture helpers summarize callable/module outputs:
+
+```python
+from topoml.adapters import TorchActivationCapture
+
+capture = TorchActivationCapture(model)
+signature = capture.signature(batch, radii=[0.0, 1.0], max_dim=0)
+```
+
+These adapters are tensor-exchange and diagnostics APIs. They do not claim
+accelerated persistent homology, sparse attention speedups, or training quality
+improvements unless a benchmark artifact proves those claims.
+
+### Topology family registry
+
+`topology_families()` exposes the objective taxonomy as public data:
+
+```python
+for family in topoml.topology_families():
+    print(family.id, family.status, family.api_surface)
+```
+
+`topology_family_coverage_matrix()` returns plain dictionaries suitable for
+docs, dashboards, and CI checks.
+
 ### Prototype topology diagnostics
 
 These APIs are active prototype diagnostics. They are implemented, tested, and
@@ -236,6 +274,4 @@ topoml.write_dashboard(
 
 These are not shipped yet. They are design commitments with gates:
 
-- `TorchActivationCapture`: PyTorch adapter.
-- `TensorFlowActivationCapture`: TensorFlow adapter.
 - `TritonScheduleBuilder`: topology-derived sparse schedule builder.

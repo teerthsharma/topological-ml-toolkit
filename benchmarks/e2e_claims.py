@@ -253,6 +253,62 @@ def _claim_tensor_bundle_and_training_surface() -> dict:
     }
 
 
+def _claim_topology_family_registry() -> dict:
+    families = {family.id: family for family in topoml.topology_families()}
+    required = {
+        "point_set",
+        "metric_uniform_proximity",
+        "domain_scott",
+        "homotopy",
+        "cohomology",
+        "sheaves_cosheaves",
+        "mapper_reeb_contour",
+        "morse_conley_dynamical",
+        "stratified_singular",
+        "nerve_cech_cover",
+        "knot_braid_link",
+        "fiber_bundles",
+        "groups_actions_quotients",
+        "low_dimensional_geometric",
+        "categorical_pointless",
+        "topological_vector_function_space",
+    }
+    assert set(families) == required
+    assert families["mapper_reeb_contour"].status == "prototype"
+    assert "mapper_graph" in families["mapper_reeb_contour"].api_surface
+    matrix = topoml.topology_family_coverage_matrix()
+    assert len(matrix) == len(required)
+    return {
+        "families": sorted(families),
+        "prototype_families": sorted(family.id for family in families.values() if family.status == "prototype"),
+        "coverage_rows": len(matrix),
+        "claim_scope": "coverage registry and docs/prototype status, not full mathematical implementation",
+    }
+
+
+def _claim_framework_adapter_import_safety() -> dict:
+    from topoml.adapters import (
+        TensorFlowActivationCapture,
+        TensorFlowTensorAdapter,
+        TorchActivationCapture,
+        TorchTensorAdapter,
+    )
+
+    forbidden = {"torch", "tensorflow"}
+    loaded = sorted(forbidden.intersection(sys.modules))
+    assert loaded == []
+    return {
+        "adapter_classes": [
+            TorchTensorAdapter.__name__,
+            TorchActivationCapture.__name__,
+            TensorFlowTensorAdapter.__name__,
+            TensorFlowActivationCapture.__name__,
+        ],
+        "heavy_modules_loaded": loaded,
+        "claim_scope": "optional adapter API import safety; runtime parity is tested when dependencies exist",
+    }
+
+
 def _claim_dashboard_export() -> dict:
     points = np.array([[0.0, 0.0], [0.2, 0.0], [1.0, 0.0]], dtype=float)
     diagram = topoml.persistent_homology(points, max_dim=0, max_radius=2.0)
@@ -291,6 +347,8 @@ def run_claims() -> list[ClaimResult]:
             "TensorBundle interoperability and topology-aware training baseline execute",
             _claim_tensor_bundle_and_training_surface,
         ),
+        _record("Topology family coverage registry includes the objective taxonomy", _claim_topology_family_registry),
+        _record("PyTorch and TensorFlow adapter APIs import without loading heavy stacks", _claim_framework_adapter_import_safety),
         _record("GUI exporter writes a self-contained topology dashboard", _claim_dashboard_export),
         _record("Backend metadata separates active code from planned acceleration", _claim_backend_contract),
         _record("Planned backend source files exist for CUDA, ASM, C++, and Triton", _claim_backend_source_inventory),
