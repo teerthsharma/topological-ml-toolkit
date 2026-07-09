@@ -143,10 +143,13 @@ def _claim_backend_source_inventory() -> dict:
         root / "backends" / "triton" / "topology_distance.py",
         root / "benchmarks" / "benchmark_native_distance.py",
         root / "benchmarks" / "benchmark_asm_distance.py",
+        root / "benchmarks" / "benchmark_ml_adapters.py",
         root / "python" / "topoml" / "native.py",
         root / "python" / "topoml" / "asm.py",
         root / "python" / "tests" / "test_cpp_native_ctypes.py",
         root / "python" / "tests" / "test_asm_native_ctypes.py",
+        root / "python" / "tests" / "test_framework_adapters.py",
+        root / "python" / "tests" / "test_gpu_backend_semantic_contract.py",
     ]
     sizes = {}
     for path in files:
@@ -156,7 +159,7 @@ def _claim_backend_source_inventory() -> dict:
         sizes[str(path.relative_to(root)).replace("\\", "/")] = size
     return {
         "source_files": sizes,
-        "claim_scope": "backend source plus native C++ and Linux x86-64 ASM compile/load smoke coverage; runtime selection remains gated",
+        "claim_scope": "backend source plus native C++, Linux x86-64 ASM, real CPU ML adapter integration, and CPU GPU-kernel semantic fixture coverage; runtime selection remains gated",
     }
 
 

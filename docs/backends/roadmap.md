@@ -64,6 +64,16 @@ For GPU schedule construction and topology-guided kernels.
 Current source: `backends/triton/topology_distance.py` contains an optional
 Triton JIT pairwise-distance prototype. It is not imported by the core package.
 
+Current CPU semantic contract:
+
+- `python/tests/test_gpu_backend_semantic_contract.py` fixes deterministic
+  expected outputs for pairwise L2, threshold edges, row sums, and persistence
+  image accumulation.
+- The same test asserts the CUDA and Triton source files expose the expected
+  public symbols.
+- This is not a runtime GPU correctness gate. It defines the outputs that future
+  CUDA/Triton runtime tests must match.
+
 Gate:
 
 - dense fallback;
@@ -91,3 +101,14 @@ allows it and keep import guards strict: importing `topoml` does not import
 Current benchmark: `benchmarks/benchmark_cuda_tensors.py` uses real CUDA tensors
 through PyTorch, times GPU projection and distance work with CUDA events, and
 then runs the current topology reduction on the selected activation cloud.
+
+Current CI integration:
+
+- `python/tests/test_framework_adapters.py` runs against real CPU PyTorch and
+  TensorFlow in the `ml integration / cpu frameworks` job.
+- PyTorch coverage includes dtype/device round-trip, activation signatures, and
+  a `torch.compile(..., backend="eager")` capture path.
+- TensorFlow coverage includes eager tensor conversion and graph-mode
+  `tf.function` parity for the same topology signature.
+- `benchmarks/benchmark_ml_adapters.py` emits a JSON artifact with framework
+  versions, dtype/device metadata, signature values, and timing smoke records.

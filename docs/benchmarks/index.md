@@ -58,3 +58,30 @@ This compiles the portable C++ C ABI, loads it through `ctypes`, compares
 pairwise distances and threshold edges against NumPy, and writes timing evidence.
 It is a preprocessing correctness/timing smoke, not a persistent-homology
 acceleration claim.
+
+## ASM Distance Benchmark
+
+Ubuntu CI also runs a Linux x86-64 assembly smoke benchmark:
+
+```powershell
+python benchmarks/benchmark_asm_distance.py --out artifacts/asm-distance.json --points 8 16 --dims 8
+```
+
+This assembles the CPUID probes and scalar L2 hot path, loads them through
+`ctypes`, compares scalar L2 output against NumPy, and records AVX2/AVX-512F
+feature bits. It is a dispatch and correctness gate, not an AVX-512 speedup
+claim.
+
+## ML Adapter Integration Benchmark
+
+The `ml integration / cpu frameworks` CI job runs real CPU PyTorch and
+TensorFlow adapter checks:
+
+```powershell
+python benchmarks/benchmark_ml_adapters.py --out artifacts/ml-adapters.json
+```
+
+The artifact records framework versions, dtype/device metadata, topology
+signature values, TensorFlow graph-mode parity, and PyTorch compile-safe capture
+evidence. It is adapter integration evidence, not a model-quality or accelerated
+persistent-homology claim.

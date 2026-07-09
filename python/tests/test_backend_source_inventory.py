@@ -14,6 +14,7 @@ def test_planned_backend_source_files_exist():
         ROOT / "backends" / "triton" / "topology_distance.py",
         ROOT / "python" / "topoml" / "asm.py",
         ROOT / "python" / "tests" / "test_asm_native_ctypes.py",
+        ROOT / "python" / "tests" / "test_gpu_backend_semantic_contract.py",
         ROOT / "benchmarks" / "benchmark_asm_distance.py",
     ]
 

@@ -39,6 +39,25 @@ def test_torch_tensor_adapter_preserves_dtype_device_and_signature_when_availabl
     assert captured.kind == "torch_activation"
 
 
+def test_torch_activation_capture_accepts_compile_safe_callable_when_available():
+    torch = pytest.importorskip("torch")
+    if not hasattr(torch, "compile"):
+        pytest.skip("torch.compile is unavailable")
+    from topoml.adapters import TorchActivationCapture
+
+    class Shift(torch.nn.Module):
+        def forward(self, x):
+            return x + 1.0
+
+    tensor = torch.tensor([[[0.0, 0.0], [1.0, 0.0]], [[0.0, 1.0], [1.0, 1.0]]], dtype=torch.float32)
+    compiled = torch.compile(Shift(), backend="eager")
+    signature = TorchActivationCapture(compiled).signature(tensor, radii=[0.0, 1.1], max_dim=0)
+
+    assert signature.kind == "torch_activation"
+    assert signature.values["torch_rank"] == 3.0
+    assert signature.values["beta0@1.1"] == 1.0
+
+
 def test_tensorflow_tensor_adapter_eager_and_function_parity_when_available():
     try:
         tf = importlib.import_module("tensorflow")
@@ -63,3 +82,4 @@ def test_tensorflow_tensor_adapter_eager_and_function_parity_when_available():
     assert eager_signature.kind == "tensorflow_activation"
     assert eager_signature.values["beta0@1.1"] == 1.0
     assert captured.kind == "tensorflow_activation"
+    assert captured.values == eager_signature.values
