@@ -57,6 +57,30 @@ class PHFeaturizer:
     def fit_transform(self, clouds: Iterable[np.ndarray], y: object | None = None) -> np.ndarray:
         return self.fit(clouds, y).transform(clouds)
 
+    def get_params(self, deep: bool = True) -> dict[str, object]:
+        del deep
+        return {
+            "max_dim": self.max_dim,
+            "radii": self.radii,
+            "homology_dims": self.homology_dims,
+        }
+
+    def set_params(self, **params: object) -> "PHFeaturizer":
+        valid = {"max_dim", "radii", "homology_dims"}
+        unknown = set(params) - valid
+        if unknown:
+            names = ", ".join(sorted(unknown))
+            raise ValueError(f"unknown PHFeaturizer parameter(s): {names}")
+        if "max_dim" in params:
+            self.max_dim = int(params["max_dim"])
+        if "radii" in params:
+            self.radii = tuple(float(radius) for radius in params["radii"])  # type: ignore[union-attr]
+        if "homology_dims" in params:
+            value = params["homology_dims"]
+            self.homology_dims = tuple(int(dim) for dim in value) if value is not None else tuple(range(self.max_dim + 1))  # type: ignore[arg-type]
+        self.is_fitted_ = False
+        return self
+
     def get_feature_names_out(self) -> np.ndarray:
         if not self.is_fitted_:
             raise RuntimeError("call fit before requesting feature names")

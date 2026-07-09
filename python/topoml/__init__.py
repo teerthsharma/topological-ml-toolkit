@@ -85,6 +85,7 @@ from .topology import (
     weak_convergence_residual,
 )
 from .training import TopologyAugmenter, TopologyRandomForestClassifier, topological_sample_weights
+from .sklearn import SklearnUnavailableError, make_sklearn_pipeline
 from .triton import (
     TritonBackendUnavailable,
     TritonRuntimeStatus,
@@ -125,6 +126,7 @@ __all__ = [
     "PersistencePair",
     "PersistenceImage",
     "SheafResidual",
+    "SklearnUnavailableError",
     "StratumSignature",
     "TensorAlgebraElement",
     "TensorBundleSpec",
@@ -156,6 +158,7 @@ __all__ = [
     "load_cuda_native_backend",
     "load_cpp_native_backend",
     "mapper_graph",
+    "make_sklearn_pipeline",
     "mesh_euler_characteristic",
     "metric_cover",
     "nerve_graph",

@@ -44,6 +44,24 @@ def test_ph_featurizer_requires_fit_before_transform():
         featurizer.transform([np.array([[0.0, 0.0]], dtype=float)])
 
 
+def test_ph_featurizer_exposes_sklearn_parameter_contract():
+    featurizer = topoml.PHFeaturizer(max_dim=0, radii=[0.0, 0.5])
+
+    assert featurizer.get_params() == {
+        "max_dim": 0,
+        "radii": (0.0, 0.5),
+        "homology_dims": (0,),
+    }
+    returned = featurizer.set_params(radii=[0.0, 1.0], max_dim=1, homology_dims=[0, 1])
+
+    assert returned is featurizer
+    assert featurizer.get_params() == {
+        "max_dim": 1,
+        "radii": (0.0, 1.0),
+        "homology_dims": (0, 1),
+    }
+
+
 def test_betti_curve_encodes_existing_diagrams():
     diagram = topoml.persistent_homology(
         np.array([[0.0, 0.0], [0.2, 0.0], [5.0, 0.0]], dtype=float),

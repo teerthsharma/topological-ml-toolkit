@@ -28,6 +28,7 @@ The current E2E gate verifies:
   sampled dynamics, braid-crossing, and mesh Euler diagnostics;
 - TensorBundle interoperability, topology sample weights, and the
   dependency-light topology random forest baseline;
+- optional sklearn `Pipeline` integration when scikit-learn is installed;
 - graph-first gallery coverage for prototypes, persistence features, embedding
   graphs, backend runtime gates, topology training, and benchmark evidence;
 - static self-contained GUI dashboard export;

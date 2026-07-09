@@ -177,7 +177,7 @@ def _claim_import_guard() -> dict:
 import json
 import sys
 import topoml
-print(json.dumps(sorted({"torch", "tensorflow", "triton"}.intersection(sys.modules))))
+print(json.dumps(sorted({"torch", "tensorflow", "triton", "sklearn"}.intersection(sys.modules))))
 """
     result = subprocess.run(
         [sys.executable, "-c", code],
@@ -383,6 +383,37 @@ def _claim_tensor_bundle_and_training_surface() -> dict:
     }
 
 
+def _claim_sklearn_pipeline_surface() -> dict:
+    estimator = None
+    try:
+        from sklearn.tree import DecisionTreeClassifier
+
+        estimator = DecisionTreeClassifier(random_state=0)
+    except Exception:
+        return {
+            "available": False,
+            "api": "make_sklearn_pipeline",
+            "claim_scope": "optional sklearn integration API is import-safe; runtime fit is checked when scikit-learn is installed",
+        }
+    clouds = [
+        np.array([[0.0, 0.0], [0.1, 0.0], [5.0, 0.0]], dtype=float),
+        np.array([[0.0, 0.0], [0.2, 0.0], [0.4, 0.0]], dtype=float),
+        np.array([[1.0, 1.0], [1.1, 1.0], [8.0, 1.0]], dtype=float),
+        np.array([[1.0, 1.0], [1.2, 1.0], [1.4, 1.0]], dtype=float),
+    ]
+    labels = np.array(["separated", "connected", "separated", "connected"], dtype=object)
+    pipeline = topoml.make_sklearn_pipeline(estimator, radii=[0.0, 0.15, 1.0], max_dim=0)
+    pipeline.fit(clouds, labels)
+    predicted = pipeline.predict(clouds)
+    assert predicted.tolist() == labels.tolist()
+    return {
+        "available": True,
+        "pipeline_steps": [name for name, _step in pipeline.steps],
+        "predicted": predicted.tolist(),
+        "claim_scope": "optional sklearn Pipeline compatibility smoke, not a model-quality claim",
+    }
+
+
 def _claim_topology_family_registry() -> dict:
     families = {family.id: family for family in topoml.topology_families()}
     required = {
@@ -521,6 +552,7 @@ def run_claims() -> list[ClaimResult]:
             "TensorBundle interoperability and topology-aware training baseline execute",
             _claim_tensor_bundle_and_training_surface,
         ),
+        _record("Optional sklearn pipeline integration executes when installed", _claim_sklearn_pipeline_surface),
         _record("Topology family coverage registry includes the objective taxonomy", _claim_topology_family_registry),
         _record("PyTorch and TensorFlow adapter APIs import without loading heavy stacks", _claim_framework_adapter_import_safety),
         _record(

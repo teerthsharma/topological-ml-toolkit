@@ -67,6 +67,8 @@ Python package: `topoml`
   `interop_add` for explicit tensor-space interoperability rules
 - `TopologyAugmenter`, `topological_sample_weights`, and
   `TopologyRandomForestClassifier` for topology-augmented training baselines
+- `make_sklearn_pipeline(estimator, ...)` for optional real sklearn `Pipeline`
+  integration without importing sklearn during `import topoml`
 - `metric_cover(points, radius)` and `nerve_graph(cover)`
 - `mapper_graph(points, filter_values, intervals, overlap, cluster_radius)`
 - `sheaf_consistency_residual(sections, restrictions)`
@@ -160,6 +162,19 @@ ambient = topoml.interop_bundle(xy, yz)
 print(ambient.basis)  # ("x", "y", "z")
 ```
 
+Optional sklearn pipeline:
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+
+pipeline = topoml.make_sklearn_pipeline(
+    DecisionTreeClassifier(random_state=0),
+    radii=[0.0, 0.15, 1.0],
+    max_dim=0,
+)
+pipeline.fit(point_clouds, labels)
+```
+
 ## Backend Roadmap
 
 | Backend | Status | Purpose | Gate before claims |
@@ -198,6 +213,7 @@ The E2E claim benchmark currently verifies:
 - prototype finite topology, cover, nerve, Mapper, sheaf residual, homotopy,
   strata, orbit, equivariance, Scott fixed-point, weak convergence, sampled
   dynamics, braid-crossing, and mesh Euler diagnostics;
+- optional real sklearn pipeline integration when scikit-learn is installed;
 - graph-first gallery pages with explicit claim boundaries;
 - self-contained HTML dashboard export;
 - backend metadata separation between active, runtime-gated, and planned work;

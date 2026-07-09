@@ -73,6 +73,8 @@ def test_api_docs_cover_public_surface_added_for_backends_and_training() -> None
         "TopologyAugmenter",
         "TopologyRandomForestClassifier",
         "topological_sample_weights",
+        "make_sklearn_pipeline",
+        "SklearnUnavailableError",
         "build_cpp_native_backend",
         "load_cpp_native_backend",
         "CppNativeBackend",

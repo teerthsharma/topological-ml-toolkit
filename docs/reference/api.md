@@ -165,6 +165,27 @@ model.fit(point_clouds, labels, base_features=tabular_features)
 predicted = model.predict(point_clouds, base_features=tabular_features)
 ```
 
+### Optional sklearn integration
+
+`make_sklearn_pipeline(estimator, radii=(...), max_dim=1, homology_dims=None)`
+builds a real `sklearn.pipeline.Pipeline` with `PHFeaturizer` followed by the
+estimator. `scikit-learn` is optional and imported only inside this helper.
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+
+pipeline = topoml.make_sklearn_pipeline(
+    DecisionTreeClassifier(random_state=0),
+    radii=[0.0, 0.15, 1.0],
+    max_dim=0,
+)
+pipeline.fit(point_clouds, labels)
+```
+
+`SklearnUnavailableError` is raised if the optional dependency is missing.
+`PHFeaturizer` exposes `get_params` and `set_params`, so sklearn can clone it
+inside pipelines and model-selection utilities.
+
 ### Backend adapters
 
 `topoml.backend_adapters()` returns API-level backend contracts for active,
