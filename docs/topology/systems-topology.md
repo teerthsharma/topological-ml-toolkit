@@ -120,8 +120,15 @@ Scott topology gives a mathematical language for monotone computation and
 observable convergence. For ML infrastructure, this is relevant to schedulers,
 dataflow systems, incremental compilation, and runtime proofs.
 
-Status: Docs-only. This belongs in core only after there is a concrete monotone
-API and a testable systems invariant.
+Status: Active finite prototype. `topoml.scott_fixed_point` runs monotone
+iteration from a bottom value with a user-supplied join:
+
+\[
+x_{t+1} = x_t \vee f(x_t)
+\]
+
+This is practical for reachability, scheduler facts, and dataflow convergence.
+It is not a general domain-theory proof engine.
 
 ## Dynamical Topology
 

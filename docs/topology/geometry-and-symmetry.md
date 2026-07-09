@@ -3,8 +3,10 @@
 This page covers topology families that often show up in modern ML systems but
 are not the same as persistent homology.
 
-Status: Docs-only first. Some families can become prototype APIs once they have
-a clear invariant, a baseline, and a graph that makes failures visible.
+Status: mixed. Homotopy, stratified spaces, and finite group actions now have
+small prototype diagnostics. Knot/link, low-dimensional, and categorical
+topology remain docs-only until they have datasets and baselines that make the
+signal actionable.
 
 ## Stratified And Singular Spaces
 
@@ -28,6 +30,10 @@ ML use cases:
 - describe decision-boundary strata;
 - detect non-manifold embedding artifacts;
 - separate boundary failures from bulk failures.
+
+Prototype: `topoml.activation_strata` records activation sign-pattern strata
+and boundary fractions. It is a ReLU-region diagnostic, not a complete
+stratified-space implementation.
 
 ## Homotopy
 
@@ -54,6 +60,16 @@ flowchart LR
   C --> D
   D --> E["Different safety or routing decision"]
 ```
+
+Prototype: `topoml.path_homotopy_signature` computes the winding number of a
+finite 2D loop around a basepoint:
+
+\[
+w = \mathrm{round}\left(\Delta \theta / 2\pi\right)
+\]
+
+This catches simple loop classes around an obstacle. It does not compute a full
+fundamental group.
 
 ## Cohomology Beyond Betti Counts
 
@@ -100,12 +116,15 @@ The quotient \(X/G\) identifies points that differ only by the group action.
 For ML, this is the language behind rotation invariance, permutation
 equivariance, gauge-equivariant models, and symmetry-aware tests.
 
-Prototype API target:
+Prototype APIs:
 
-- define the action;
-- define expected invariance or equivariance;
-- test model outputs across orbit samples;
-- report violations as a table and graph.
+- `topoml.finite_orbit_signature` summarizes a finite sampled orbit, stabilizer
+  count, and quotient representative.
+- `topoml.equivariance_residual` tests finite sampled invariance or equivariance
+  residuals across model outputs.
+
+These APIs test sampled actions only. They do not prove a model is equivariant
+for a continuous group.
 
 ## Bundles And Sections
 

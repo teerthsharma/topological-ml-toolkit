@@ -205,15 +205,73 @@ def _claim_topology_prototypes() -> dict:
         {"a": np.array([1.0, 2.0]), "b": np.array([1.0, 3.0])},
         [("a", "b", np.eye(2))],
     )
+    winding = topoml.path_homotopy_signature(
+        np.array([[1.0, 0.0], [0.0, 1.0], [-1.0, 0.0], [0.0, -1.0], [1.0, 0.0]], dtype=float)
+    )
+    strata = topoml.activation_strata(
+        np.array([[1.0, -1.0, 0.0], [2.0, 3.0, -1.0], [-1.0, -2.0, -3.0]], dtype=float),
+        boundary_tolerance=0.0,
+    )
+    orbit = topoml.finite_orbit_signature(
+        np.array([1.0, 0.0]),
+        [
+            np.eye(2),
+            np.array([[-1.0, 0.0], [0.0, 1.0]]),
+            np.array([[1.0, 0.0], [0.0, -1.0]]),
+            -np.eye(2),
+        ],
+    )
+    equivariance = topoml.equivariance_residual(
+        np.array([[1.0, 3.0], [2.0, 5.0]], dtype=float),
+        lambda x: x.sum(axis=1, keepdims=True),
+        {"swap": np.array([[0.0, 1.0], [1.0, 0.0]], dtype=float)},
+    )
+    scott = topoml.scott_fixed_point(
+        lambda reached: (reached @ np.array(
+            [
+                [False, True, False, False],
+                [False, False, True, False],
+                [False, False, False, True],
+                [False, False, False, False],
+            ],
+            dtype=bool,
+        )) | reached,
+        np.array([True, False, False, False]),
+        join=np.logical_or,
+    )
+    weak = topoml.weak_convergence_residual(
+        np.array([[0.0, 10.0], [0.5, -10.0], [1.0, 10.0]], dtype=float),
+        np.array([1.0, 0.0], dtype=float),
+        np.array([[1.0, 0.0]], dtype=float),
+    )
 
     assert nerve.edges == ((0, 1),)
     assert mapper.edges == ((0, 1),)
     assert residual.max_residual == 1.0
+    assert winding.winding_number == 1
+    assert strata.stratum_counts == {"000": 1, "100": 1, "110": 1}
+    assert orbit.orbit_size == 2 and orbit.stabilizer_count == 2
+    assert equivariance.max_residual == 0.0
+    assert scott.fixed_point.tolist() == [True, True, True, True]
+    assert weak.max_residual == 0.0 and weak.strong_residual == 10.0
     return {
         "cover_cells": [list(cell.members) for cell in cover.cells],
         "nerve_edges": [list(edge) for edge in nerve.edges],
         "mapper_edges": [list(edge) for edge in mapper.edges],
         "sheaf_max_residual": residual.max_residual,
+        "homotopy_winding_number": winding.winding_number,
+        "activation_strata": strata.stratum_counts,
+        "orbit": {
+            "orbit_size": orbit.orbit_size,
+            "stabilizer_count": orbit.stabilizer_count,
+            "orbit_diameter": orbit.orbit_diameter,
+        },
+        "equivariance_residual": equivariance.action_residuals,
+        "scott_fixed_point": {"steps": scott.steps, "converged": scott.converged},
+        "weak_convergence": {
+            "probe_residuals": weak.probe_residuals.tolist(),
+            "strong_residual": weak.strong_residual,
+        },
         "claim_scope": "prototype topology diagnostics, not accelerated backend behavior",
     }
 
@@ -381,7 +439,10 @@ def run_claims() -> list[ClaimResult]:
             "Feature encoders and topology signatures cover diagrams, graphs, and activations",
             _claim_feature_encoders_and_signatures,
         ),
-        _record("Topology prototype APIs build covers, Mapper edges, and sheaf residuals", _claim_topology_prototypes),
+        _record(
+            "Topology prototype APIs build covers, Mapper, sheaf, homotopy, strata, orbit, equivariance, Scott, and weak-convergence diagnostics",
+            _claim_topology_prototypes,
+        ),
         _record(
             "TensorBundle interoperability and topology-aware training baseline execute",
             _claim_tensor_bundle_and_training_surface,

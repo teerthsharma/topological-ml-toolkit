@@ -3,8 +3,9 @@
 Many ML systems start with vectors, distances, and functions. Topology provides
 the rules for when those distances and functions behave consistently.
 
-Status: Docs-only plus Prototype API targets. Active code currently uses
-Euclidean point clouds and time-delay embeddings.
+Status: active prototypes for metric covers, finite-probe weak convergence, and
+Euclidean point-cloud/time-delay embeddings. General metric objects and full
+function-space topology remain future work.
 
 ## Metric Spaces
 
@@ -131,16 +132,27 @@ flowchart TB
   E --> F["Distribution shift or optimizer stability diagnostic"]
 ```
 
+Prototype: `topoml.weak_convergence_residual` evaluates the last element of a
+finite sequence against a limit under finite linear probes:
+
+\[
+r_j = |\phi_j(x_n) - \phi_j(x)|
+\]
+
+It also reports the strong norm residual. This makes projection-level drift
+visible without claiming a proof of mathematical weak convergence.
+
 ## API Direction
 
-Future metric and function-space APIs should expose:
+Future metric and function-space APIs should expand toward:
 
 - explicit metric objects;
 - tolerance contracts for backend equivalence;
 - neighborhood samplers;
 - drift diagnostics over sets;
-- weak convergence tests over selected probes;
+- richer weak convergence tests over selected probes;
 - benchmark artifacts comparing against norm-only drift checks.
 
-No such API should be called active until it has unit tests, E2E examples, and a
-failure case where it adds information beyond ordinary Euclidean distance.
+No broad metric or function-space API should be called complete until it has
+unit tests, E2E examples, and a failure case where it adds information beyond
+ordinary Euclidean distance.

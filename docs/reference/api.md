@@ -258,6 +258,56 @@ residual = topoml.sheaf_consistency_residual(
 )
 ```
 
+`topoml.path_homotopy_signature(path, basepoint=(0, 0))` summarizes a planar
+closed path by total angle and winding number around a basepoint:
+
+\[
+w = \mathrm{round}\left(\frac{\Delta \theta}{2\pi}\right)
+\]
+
+This is a finite sampled loop diagnostic, not a full fundamental-group engine.
+
+`topoml.activation_strata(activations, threshold=0)` records binary activation
+regions such as ReLU sign patterns and the fraction of entries on the threshold
+boundary.
+
+`topoml.finite_orbit_signature(point, transforms)` summarizes a finite sampled
+group action by orbit size, stabilizer count, orbit diameter, and one quotient
+representative.
+
+`topoml.equivariance_residual(points, model, input_actions, output_actions=None)`
+tests finite sampled symmetry actions:
+
+\[
+r_g = \|F(gx) - \rho(g)F(x)\|_2
+\]
+
+When `output_actions` is omitted, the diagnostic tests invariance:
+
+\[
+r_g = \|F(gx) - F(x)\|_2
+\]
+
+`topoml.scott_fixed_point(update, bottom, join=np.maximum)` runs a finite
+monotone fixed-point iteration:
+
+\[
+x_{t+1} = x_t \vee f(x_t)
+\]
+
+It is useful for reachability, monotone dataflow, and scheduler facts. It is not
+a proof assistant for domain theory.
+
+`topoml.weak_convergence_residual(sequence, limit, probes)` compares the final
+sequence element against a limit under finite linear probes:
+
+\[
+r_j = |\phi_j(x_n) - \phi_j(x)|
+\]
+
+It also reports the strong norm residual so projection-level convergence is not
+confused with full norm convergence.
+
 ### `topoml.write_dashboard(path, title, diagram=None, feature_matrix=None, metadata=None)`
 
 Writes a self-contained HTML dashboard for local inspection or CI artifacts.
