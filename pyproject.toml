@@ -38,4 +38,6 @@ where = ["python"]
 
 [tool.pytest.ini_options]
 testpaths = ["python/tests"]
-
+markers = [
+    "cuda_compile: optional CUDA source compile checks that require nvcc and a configured host compiler",
+]

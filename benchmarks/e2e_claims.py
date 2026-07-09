@@ -150,6 +150,7 @@ def _claim_backend_source_inventory() -> dict:
         root / "python" / "tests" / "test_asm_native_ctypes.py",
         root / "python" / "tests" / "test_framework_adapters.py",
         root / "python" / "tests" / "test_gpu_backend_semantic_contract.py",
+        root / "python" / "tests" / "test_cuda_nvcc_compile.py",
     ]
     sizes = {}
     for path in files:
@@ -159,7 +160,7 @@ def _claim_backend_source_inventory() -> dict:
         sizes[str(path.relative_to(root)).replace("\\", "/")] = size
     return {
         "source_files": sizes,
-        "claim_scope": "backend source plus native C++, Linux x86-64 ASM, real CPU ML adapter integration, and CPU GPU-kernel semantic fixture coverage; runtime selection remains gated",
+        "claim_scope": "backend source plus native C++, Linux x86-64 ASM, real CPU ML adapter integration, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; runtime selection remains gated",
     }
 
 
