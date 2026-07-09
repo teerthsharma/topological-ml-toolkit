@@ -97,6 +97,8 @@ from .sklearn import SklearnUnavailableError, make_sklearn_pipeline
 from .triton import (
     TritonBackendUnavailable,
     TritonRuntimeStatus,
+    TritonSchedule,
+    TritonScheduleBuilder,
     triton_pairwise_l2,
     triton_runtime_status,
 )
@@ -145,6 +147,8 @@ __all__ = [
     "TopologyRandomForestClassifier",
     "TritonBackendUnavailable",
     "TritonRuntimeStatus",
+    "TritonSchedule",
+    "TritonScheduleBuilder",
     "WeakConvergenceResidual",
     "activation_signature",
     "activation_strata",

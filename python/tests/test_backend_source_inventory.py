@@ -21,6 +21,7 @@ def test_backend_source_files_exist():
         ROOT / "python" / "tests" / "test_gpu_backend_semantic_contract.py",
         ROOT / "python" / "tests" / "test_cuda_nvcc_compile.py",
         ROOT / "benchmarks" / "benchmark_asm_distance.py",
+        ROOT / "benchmarks" / "benchmark_triton_schedule.py",
         ROOT / "benchmarks" / "benchmark_tda_baselines.py",
         ROOT / "python" / "tests" / "test_tda_baseline_parity.py",
     ]

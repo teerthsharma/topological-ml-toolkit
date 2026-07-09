@@ -165,6 +165,7 @@ def _claim_backend_source_inventory() -> dict:
         root / "benchmarks" / "benchmark_native_distance.py",
         root / "benchmarks" / "benchmark_asm_distance.py",
         root / "benchmarks" / "benchmark_ml_adapters.py",
+        root / "benchmarks" / "benchmark_triton_schedule.py",
         root / "benchmarks" / "benchmark_tda_baselines.py",
         root / "python" / "topoml" / "native.py",
         root / "python" / "topoml" / "asm.py",
@@ -187,7 +188,7 @@ def _claim_backend_source_inventory() -> dict:
         sizes[str(path.relative_to(root)).replace("\\", "/")] = size
     return {
         "source_files": sizes,
-        "claim_scope": "active native C++ H0 source, active hardware-gated ASM L2 dispatch, active optional CUDA pairwise-L2/threshold runtime wrapper, active optional Triton pairwise-L2 runtime wrapper, active optional PyTorch/TensorFlow adapters, external TDA baseline parity, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; broad GPU PH acceleration remains gated",
+        "claim_scope": "active native C++ H0 source, active hardware-gated ASM L2 dispatch, active optional CUDA pairwise-L2/threshold runtime wrapper, active optional Triton pairwise-L2 runtime wrapper, CPU Triton schedule-construction benchmark, active optional PyTorch/TensorFlow adapters, external TDA baseline parity, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; broad GPU PH acceleration remains gated",
     }
 
 
@@ -489,6 +490,44 @@ def _claim_framework_adapter_import_safety() -> dict:
     }
 
 
+def _claim_triton_schedule_builder_surface() -> dict:
+    builder = topoml.TritonScheduleBuilder(
+        budget=4,
+        sink_tokens=1,
+        local_window=1,
+        landmark_count=2,
+        random_state=7,
+    )
+    schedule = builder.build(
+        np.array(
+            [
+                [0.0, 0.0],
+                [0.1, 0.0],
+                [2.0, 0.0],
+                [2.1, 0.0],
+                [5.0, 0.0],
+                [5.1, 0.0],
+            ],
+            dtype=float,
+        ),
+        query_index=5,
+    )
+    assert schedule.selected_key_indices == (0, 3, 4, 5)
+    assert schedule.dense_baseline_indices == (0, 1, 2, 3, 4, 5)
+    assert len(schedule.random_baseline_indices) == len(schedule.selected_key_indices)
+    assert schedule.local_baseline_indices == (0, 3, 4, 5)
+    assert schedule.budget_unit == "selected_keys"
+    return {
+        "selected_key_indices": list(schedule.selected_key_indices),
+        "dense_baseline_indices": list(schedule.dense_baseline_indices),
+        "local_baseline_indices": list(schedule.local_baseline_indices),
+        "random_baseline_indices": list(schedule.random_baseline_indices),
+        "strategy": schedule.strategy,
+        "budget_unit": schedule.budget_unit,
+        "claim_scope": schedule.claim_scope,
+    }
+
+
 def _claim_visual_topology_gallery_docs() -> dict:
     root = Path(__file__).resolve().parents[1]
     pages = {
@@ -611,6 +650,7 @@ def run_claims() -> list[ClaimResult]:
         _record("Optional sklearn pipeline integration executes when installed", _claim_sklearn_pipeline_surface),
         _record("Topology family coverage registry includes the objective taxonomy", _claim_topology_family_registry),
         _record("PyTorch and TensorFlow adapter APIs import without loading heavy stacks", _claim_framework_adapter_import_safety),
+        _record("Triton schedule builder emits topology candidates plus same-budget baselines", _claim_triton_schedule_builder_surface),
         _record(
             "Visual topology gallery documents prototypes, runtime gates, training, and benchmark evidence",
             _claim_visual_topology_gallery_docs,

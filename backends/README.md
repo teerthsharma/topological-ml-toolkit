@@ -1,8 +1,9 @@
 # Backend Contracts
 
 This directory contains backend contracts and backend source files. C++ now has
-an active H0 native path behind a build/test gate; CUDA, Assembly, and Triton
-remain source-level contracts until their correctness and benchmark gates pass.
+an active H0 native path behind a build/test gate. CUDA, Assembly, and Triton
+also have active optional or hardware-gated surfaces, with strict claim
+boundaries around the operations they actually implement.
 
 ## Source Inventory
 
@@ -13,7 +14,7 @@ remain source-level contracts until their correctness and benchmark gates pass.
 - `cpp/topoml_native.cpp`: portable C++ C-ABI distance, threshold, and H0 barcode routines.
 - `triton/topology_distance.py`: optional Triton JIT pairwise distance prototype.
 
-## Current Native C++ Gate
+## Current Native C++ And ASM Gates
 
 The C++ backend now has a build-tested preprocessing and H0 barcode gate:
 
@@ -56,7 +57,9 @@ Required checks:
 
 - CPUID gate for AVX-512 or AVX2, currently smoke-tested through
   `topoml_cpuid_leaf7_ebx`, `topoml_has_avx2`, and `topoml_has_avx512f`;
-- output barcode equivalence against safe Rust;
+- distance-output equivalence against NumPy for active ASM dispatch;
+- barcode equivalence against safe Rust before any future ASM PH-reduction
+  claim;
 - no unchecked pointer arithmetic outside the FFI boundary;
 - benchmark artifact before speed claim.
 

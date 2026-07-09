@@ -71,7 +71,7 @@ _BACKEND_METADATA: tuple[BackendMetadata, ...] = (
         active=True,
         available=False,
         planned=False,
-        capabilities=("triton_pairwise_l2", "cuda_runtime", "framework_adapter"),
+        capabilities=("triton_pairwise_l2", "topology_schedule_builder", "cuda_runtime", "framework_adapter"),
         gates=(
             "optional torch dependency",
             "optional triton dependency",

@@ -299,6 +299,28 @@ GPU persistent homology remains future backend work.
 `triton_runtime_status()` checks whether PyTorch, Triton, and a CUDA device are
 available without forcing those imports during normal `topoml` import.
 
+`TritonScheduleBuilder(budget, sink_tokens=1, local_window=32,
+landmark_count=8, random_state=0)` builds a CPU-side topology-guided candidate
+schedule for later Triton or attention benchmarks. It selects sink tokens, a
+causal local window, and farthest-point landmarks from key embeddings. The
+returned `TritonSchedule` also includes local-only and same-budget random
+baselines so schedule quality cannot be judged without ablations.
+
+```python
+builder = topoml.TritonScheduleBuilder(
+    budget=128,
+    sink_tokens=4,
+    local_window=64,
+    landmark_count=32,
+)
+schedule = builder.build(key_embeddings, query_index=len(key_embeddings) - 1)
+print(schedule.selected_key_indices)
+print(schedule.random_baseline_indices)
+```
+
+The schedule builder is active API for construction and benchmark harnesses; it
+does not launch a sparse-attention kernel and does not claim speedup.
+
 `triton_pairwise_l2(points, block=1024)` launches the optional Triton pairwise-L2
 kernel when the runtime gate passes.
 
@@ -309,8 +331,10 @@ if status.available:
 ```
 
 The Triton claim boundary is pairwise L2 parity against dense `torch.cdist` on
-small fixtures. Topology-guided sparse attention requires dense SDPA or
-FlashAttention baselines plus same-budget ablations before any speedup claim.
+small fixtures plus CPU-side topology schedule construction with local and
+random same-budget baselines. Topology-guided sparse attention still requires
+dense SDPA or FlashAttention baselines, kernel execution evidence, and
+same-budget ablations before any speedup claim.
 
 ### Framework tensor adapters
 
@@ -503,8 +527,7 @@ topoml.write_dashboard(
 )
 ```
 
-## Planned Public APIs
+## Unimplemented Planned Public APIs
 
-These are not shipped yet. They are design commitments with gates:
-
-- `TritonScheduleBuilder`: topology-derived sparse schedule builder.
+No public API placeholders are currently listed here. New roadmap APIs should be
+added only with explicit gates, tests, and claim boundaries.

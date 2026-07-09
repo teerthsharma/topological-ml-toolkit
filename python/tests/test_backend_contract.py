@@ -57,6 +57,7 @@ def test_triton_is_active_optional_backend_with_cuda_runtime_gate() -> None:
     assert not metadata.available
     assert not metadata.planned
     assert "triton_pairwise_l2" in metadata.capabilities
+    assert "topology_schedule_builder" in metadata.capabilities
     assert "cuda" in " ".join(metadata.gates).lower()
     assert topoml.select_backend("triton") is None
 

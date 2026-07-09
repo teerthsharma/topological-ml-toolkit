@@ -115,6 +115,20 @@ small CUDA tensor. On CPU-only machines it skips with the missing runtime gate.
 This is pairwise-distance correctness evidence only, not a sparse-attention,
 FlashAttention, or persistent-homology speedup claim.
 
+## Triton Schedule Construction Benchmark
+
+CPU-only machines can run the topology-guided schedule builder benchmark:
+
+```powershell
+python benchmarks/benchmark_triton_schedule.py --out artifacts/triton-schedule.json
+```
+
+The artifact records selected topology candidate keys, dense causal baseline
+keys, local-only same-budget keys, random same-budget keys, the budget unit, and
+schedule-build time. It does not import `torch`, `triton`, or require CUDA. This
+is schedule-construction evidence only, not a runtime-kernel, SDPA,
+FlashAttention, or sparse-attention speedup claim.
+
 ## External TDA Baseline Benchmark
 
 CI installs real `ripser` and `GUDHI` wheels and runs:

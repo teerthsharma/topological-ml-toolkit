@@ -90,6 +90,8 @@ def test_api_docs_cover_public_surface_added_for_backends_and_training() -> None
         "build_cuda_native_backend",
         "load_cuda_native_backend",
         "CudaNativeBackend",
+        "TritonSchedule",
+        "TritonScheduleBuilder",
         "triton_runtime_status",
         "triton_pairwise_l2",
         "TorchTensorAdapter",

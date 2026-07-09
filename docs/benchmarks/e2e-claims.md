@@ -31,6 +31,7 @@ The current E2E gate verifies:
 - TensorBundle interoperability, topology sample weights, and the
   dependency-light topology random forest baseline;
 - optional sklearn `Pipeline` integration when scikit-learn is installed;
+- Triton schedule construction with local and same-budget random ablations;
 - graph-first gallery coverage for prototypes, persistence features, embedding
   graphs, backend runtime gates, topology training, and benchmark evidence;
 - static self-contained GUI dashboard export;
@@ -38,7 +39,8 @@ The current E2E gate verifies:
   and dashboard export;
 - backend metadata that separates active code from planned acceleration;
 - backend source inventory for active C++, active hardware-gated Assembly,
-  active optional CUDA, and active optional Triton runtime work;
+  active optional CUDA, active optional Triton runtime work, and the CPU Triton
+  schedule-construction benchmark;
 - import safety for optional ML/GPU stacks;
 - active optional PyTorch and TensorFlow adapter metadata;
 - benchmark-smoke timing records for the Python reference path.

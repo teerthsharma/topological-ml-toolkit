@@ -90,8 +90,9 @@ Mixed-space operations use an interoperability morphism:
 \mathrm{op}(a' \in V \cup W, b' \in V \cup W)
 \]
 
-In Python this is a runtime descriptor. In future Rust, C++, CUDA, Triton, and
-ASM backends, the same contract can become a compile-time or kernel-layout rule.
+In Python this is a runtime descriptor. The active C++, ASM, CUDA, and Triton
+surfaces already expose scoped native or schedule-construction hooks; deeper
+compile-time tensor-bundle lowering and kernel-layout rules remain future work.
 
 ## Claim Gate
 

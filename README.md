@@ -216,8 +216,8 @@ falling back to a slower or different implementation.
 
 ```python
 result = topoml.select_backend_adapter("triton", raise_unavailable=False)
-print(result.available)       # False today
-print(result.missing_gates)   # dense baseline, optional dependency, parity gates
+print(result.available)       # depends on torch, Triton, CUDA, and parity gates
+print(result.missing_gates)   # explicit runtime gates when unavailable
 ```
 
 ## Benchmark Discipline
