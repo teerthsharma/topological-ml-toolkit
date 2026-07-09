@@ -7,7 +7,8 @@ the package.
 The gate is intentionally strict about wording:
 
 - active claims must have executable evidence;
-- planned backends must be discoverable as API contracts, not implied speedups;
+- runtime-gated backends must expose explicit missing gates, not implied
+  speedups;
 - timed smoke results are recorded as timing records, not performance wins;
 - optional stacks such as PyTorch, TensorFlow, and Triton must not load during
   `import topoml`.
@@ -25,8 +26,8 @@ The current E2E gate verifies:
 - prototype metric-cover, nerve, Mapper, and sheaf residual diagnostics;
 - static self-contained GUI dashboard export;
 - backend metadata that separates active code from planned acceleration;
-- backend source inventory for active C++, active hardware-gated Assembly, and
-  planned CUDA/Triton;
+- backend source inventory for active C++, active hardware-gated Assembly,
+  active optional Triton, and planned CUDA extension work;
 - import safety for optional ML/GPU stacks;
 - active optional PyTorch and TensorFlow adapter metadata;
 - benchmark-smoke timing records for the Python reference path.
@@ -34,11 +35,13 @@ The current E2E gate verifies:
 
 ## What Is Not Claimed Yet
 
-The gate does not claim that Triton or CUDA runtime backends are implemented.
+The gate does not claim that CUDA extension runtime backends are implemented.
 C++ is active for H0 barcode construction. ASM is active for CPUID/XCR0-gated
-L2-squared dispatch only. PyTorch and TensorFlow are active optional
-tensor/activation adapters. H1/H2 native reduction and framework-native PH
-kernels remain gated until equivalence tests and baseline benchmarks pass.
+L2-squared dispatch only. Triton is active for optional CUDA pairwise-L2 parity
+against `torch.cdist` only. PyTorch and TensorFlow are active optional
+tensor/activation adapters. H1/H2 native reduction, topology-guided sparse
+attention, and framework-native PH kernels remain gated until equivalence tests
+and baseline benchmarks pass.
 
 The gate also does not claim a speedup over `ripser`, GUDHI, sklearn, dense
 SDPA, FlashAttention, or any framework kernel. Those comparisons belong in

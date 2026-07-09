@@ -54,12 +54,35 @@ fn asm_avx512_metadata_declares_cpu_and_correctness_gates() {
 
 #[test]
 fn planned_acceleration_backends_are_not_selected() {
-    let id = BackendId::Triton;
-    let metadata = backend_metadata(id).expect("planned backend metadata should exist");
+    let planned: Vec<_> = [
+        BackendId::SafeRust,
+        BackendId::Cpp,
+        BackendId::AsmAvx512,
+        BackendId::Triton,
+        BackendId::PyTorch,
+        BackendId::TensorFlow,
+    ]
+    .into_iter()
+    .filter_map(backend_metadata)
+    .filter(|metadata| metadata.planned)
+    .collect();
 
-    assert!(!metadata.active);
+    assert!(planned.is_empty());
+}
+
+#[test]
+fn triton_metadata_is_active_optional_not_planned() {
+    let metadata = backend_metadata(BackendId::Triton).expect("Triton metadata should exist");
+
+    assert!(metadata.active);
     assert!(!metadata.available);
-    assert!(metadata.planned);
-    assert!(!metadata.gates.is_empty());
-    assert!(select_backend(id).is_none());
+    assert!(!metadata.planned);
+    assert!(metadata
+        .warnings
+        .contains(&BackendWarning::OptionalDependency));
+    assert!(!metadata.warnings.contains(&BackendWarning::PlannedOnly));
+    assert!(!metadata
+        .warnings
+        .contains(&BackendWarning::MissingImplementation));
+    assert!(select_backend(BackendId::Triton).is_none());
 }

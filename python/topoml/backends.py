@@ -93,13 +93,18 @@ def select_backend_adapter(backend_id: str, *, raise_unavailable: bool = True) -
 
 def _adapter_from_metadata(metadata: Any) -> BackendAdapter:
     status: BackendStatus = "active" if metadata.active else "planned"
+    available = metadata.active and metadata.available
+    if metadata.id == "triton" and metadata.active:
+        from .triton import triton_runtime_status
+
+        available = triton_runtime_status().available
     return BackendAdapter(
         id=metadata.id,
         status=status,
         capabilities=metadata.capabilities,
         required_gates=metadata.gates,
         warnings=metadata.warnings,
-        _available=metadata.active and metadata.available,
+        _available=available,
     )
 
 

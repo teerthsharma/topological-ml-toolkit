@@ -76,6 +76,12 @@ from .topology import (
     weak_convergence_residual,
 )
 from .training import TopologyAugmenter, TopologyRandomForestClassifier, topological_sample_weights
+from .triton import (
+    TritonBackendUnavailable,
+    TritonRuntimeStatus,
+    triton_pairwise_l2,
+    triton_runtime_status,
+)
 
 __all__ = [
     "BackendAdapter",
@@ -111,6 +117,8 @@ __all__ = [
     "TopologyAugmenter",
     "TopologyFamily",
     "TopologyRandomForestClassifier",
+    "TritonBackendUnavailable",
+    "TritonRuntimeStatus",
     "WeakConvergenceResidual",
     "activation_signature",
     "activation_strata",
@@ -143,6 +151,8 @@ __all__ = [
     "topology_family",
     "topology_family_coverage_matrix",
     "topological_sample_weights",
+    "triton_pairwise_l2",
+    "triton_runtime_status",
     "weak_convergence_residual",
     "write_dashboard",
 ]

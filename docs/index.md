@@ -38,8 +38,8 @@ flowchart LR
 ## What Is API-Level Roadmap
 
 The repository exposes an active C++ H0 native path, active hardware-gated ASM
-L2-squared dispatch, and active optional PyTorch and TensorFlow tensor adapters.
-Triton remains a backend contract with explicit gates. The docs do not claim
+L2-squared dispatch, an active optional Triton pairwise-L2 runtime wrapper, and
+active optional PyTorch and TensorFlow tensor adapters. The docs do not claim
 acceleration until equivalence tests and benchmark baselines pass.
 
 ## Learning Path

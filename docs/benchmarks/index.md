@@ -86,6 +86,20 @@ signature values, TensorFlow graph-mode parity, and PyTorch compile-safe capture
 evidence. It is adapter integration evidence, not a model-quality or accelerated
 persistent-homology claim.
 
+## Triton Runtime Check
+
+CUDA machines with `torch` and `triton` can run the focused runtime parity test:
+
+```powershell
+python -m pip install -e ".[gpu,test]"
+python -m pytest python/tests/test_triton_runtime.py -q -rs
+```
+
+The test compares `topoml.triton_pairwise_l2` against dense `torch.cdist` on a
+small CUDA tensor. On CPU-only machines it skips with the missing runtime gate.
+This is pairwise-distance correctness evidence only, not a sparse-attention,
+FlashAttention, or persistent-homology speedup claim.
+
 ## External TDA Baseline Benchmark
 
 CI installs real `ripser` and `GUDHI` wheels and runs:

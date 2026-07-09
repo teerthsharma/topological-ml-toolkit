@@ -67,7 +67,17 @@ tests and benchmark baselines.
 For GPU schedule construction and topology-guided kernels.
 
 Current source: `backends/triton/topology_distance.py` contains an optional
-Triton JIT pairwise-distance prototype. It is not imported by the core package.
+Triton JIT pairwise-distance prototype. `python/topoml/triton.py` exposes a
+lazy runtime wrapper that checks `torch`, `triton`, and CUDA availability before
+launching the kernel.
+
+Current runtime contract:
+
+- `python/tests/test_triton_runtime.py` verifies that importing `topoml` does
+  not import `torch` or `triton`.
+- On CUDA machines with `torch` and `triton`, the same test compares
+  `topoml.triton_pairwise_l2` against dense `torch.cdist` on a small fixture.
+- On CPU-only machines, the test skips with the explicit missing runtime gate.
 
 Current CPU semantic contract:
 
@@ -77,7 +87,7 @@ Current CPU semantic contract:
 - The same test asserts the CUDA and Triton source files expose the expected
   public symbols.
 - This is not a runtime GPU correctness gate. It defines the outputs that future
-  CUDA/Triton runtime tests must match.
+  CUDA extension runtime tests must match.
 
 Current CUDA compile contract:
 
@@ -94,10 +104,11 @@ Current CUDA compile contract:
 
 Gate:
 
-- dense fallback;
-- schedule validation;
-- dtype/device preservation;
-- benchmark against dense SDPA or FlashAttention.
+- topology-guided schedule validation;
+- dtype/device preservation beyond the pairwise-L2 prototype;
+- same-budget ablations;
+- benchmark against dense SDPA or FlashAttention before any sparse-attention
+  speedup claim.
 
 ## PyTorch and TensorFlow
 

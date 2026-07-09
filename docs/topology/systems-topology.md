@@ -159,5 +159,5 @@ For systems claims, the backend contract must answer:
 - What baseline falsifies the speed or memory claim?
 - What happens when the backend is unavailable?
 
-The current API uses explicit planned backend adapters so an unavailable
+The current API uses explicit runtime-gated backend adapters so an unavailable
 accelerator cannot silently execute as a different backend.

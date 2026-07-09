@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import platform
+import subprocess
 import sys
 import time
 from dataclasses import asdict, dataclass
@@ -115,19 +116,17 @@ def _claim_backend_contract() -> dict:
     active = {backend.id for backend in metadata.values() if backend.active}
     available = {backend.id for backend in metadata.values() if backend.active and backend.available}
     planned = {backend.id for backend in metadata.values() if backend.planned and not backend.available}
-    assert {"safe_rust", "python_reference", "cpp", "asm_avx512", "pytorch", "tensorflow"}.issubset(active)
+    assert {"safe_rust", "python_reference", "cpp", "asm_avx512", "triton", "pytorch", "tensorflow"}.issubset(active)
     assert {"safe_rust", "python_reference", "cpp"}.issubset(available)
-    assert {"triton"}.issubset(planned)
+    assert not planned
     assert topoml.select_backend("triton") is None
     adapter_result = topoml.select_backend_adapter("triton", raise_unavailable=False)
     assert adapter_result.adapter.id == "triton"
-    assert not adapter_result.available
-    assert adapter_result.missing_gates
     return {
         "active_implemented": sorted(active),
         "active_available": sorted(available),
         "planned_unavailable": sorted(planned),
-        "strict_adapter_example": {
+        "runtime_gated_adapter_example": {
             "id": adapter_result.adapter.id,
             "available": adapter_result.available,
             "missing_gates": list(adapter_result.missing_gates),
@@ -150,8 +149,10 @@ def _claim_backend_source_inventory() -> dict:
         root / "benchmarks" / "benchmark_tda_baselines.py",
         root / "python" / "topoml" / "native.py",
         root / "python" / "topoml" / "asm.py",
+        root / "python" / "topoml" / "triton.py",
         root / "python" / "tests" / "test_cpp_native_ctypes.py",
         root / "python" / "tests" / "test_asm_native_ctypes.py",
+        root / "python" / "tests" / "test_triton_runtime.py",
         root / "python" / "tests" / "test_tda_baseline_parity.py",
         root / "python" / "tests" / "test_framework_adapters.py",
         root / "python" / "tests" / "test_gpu_backend_semantic_contract.py",
@@ -165,13 +166,24 @@ def _claim_backend_source_inventory() -> dict:
         sizes[str(path.relative_to(root)).replace("\\", "/")] = size
     return {
         "source_files": sizes,
-        "claim_scope": "active native C++ H0 source, active hardware-gated ASM L2 dispatch, active optional PyTorch/TensorFlow adapters, external TDA baseline parity, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; Triton/CUDA acceleration remains gated",
+        "claim_scope": "active native C++ H0 source, active hardware-gated ASM L2 dispatch, active optional Triton pairwise-L2 runtime wrapper, active optional PyTorch/TensorFlow adapters, external TDA baseline parity, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; CUDA extension runtime acceleration remains gated",
     }
 
 
 def _claim_import_guard() -> dict:
-    forbidden = {"torch", "tensorflow", "triton"}
-    loaded = sorted(forbidden.intersection(sys.modules))
+    code = """
+import json
+import sys
+import topoml
+print(json.dumps(sorted({"torch", "tensorflow", "triton"}.intersection(sys.modules))))
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", code],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    loaded = json.loads(result.stdout)
     assert loaded == []
     return {"forbidden_optional_modules_loaded": loaded}
 
@@ -457,7 +469,7 @@ def run_claims() -> list[ClaimResult]:
         _record("Visual topology gallery documents active Mapper, sheaf, and cover prototypes", _claim_visual_topology_gallery_docs),
         _record("GUI exporter writes a self-contained topology dashboard", _claim_dashboard_export),
         _record("Backend metadata separates active code from planned acceleration", _claim_backend_contract),
-        _record("Backend source files exist for active C++/ASM and planned CUDA/Triton", _claim_backend_source_inventory),
+        _record("Backend source files exist for active C++/ASM/Triton and planned CUDA extension work", _claim_backend_source_inventory),
         _record("Importing topoml does not import heavy optional ML/GPU stacks", _claim_import_guard),
         _record("Benchmark runner records active Python-reference timings", _claim_benchmark_record),
     ]

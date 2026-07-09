@@ -68,16 +68,17 @@ _BACKEND_METADATA: tuple[BackendMetadata, ...] = (
     BackendMetadata(
         id="triton",
         name="Triton",
-        active=False,
+        active=True,
         available=False,
-        planned=True,
-        capabilities=("framework_adapter",),
+        planned=False,
+        capabilities=("triton_pairwise_l2", "cuda_runtime", "framework_adapter"),
         gates=(
+            "optional torch dependency",
             "optional triton dependency",
-            "dense SDPA/FlashAttention baseline",
-            "same-budget ablations",
+            "CUDA device",
+            "torch.cdist parity",
         ),
-        warnings=("planned only", "missing implementation", "optional dependency"),
+        warnings=("optional dependency", "CUDA gate"),
     ),
     BackendMetadata(
         id="pytorch",

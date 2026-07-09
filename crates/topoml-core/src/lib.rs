@@ -62,9 +62,10 @@ const NO_GATES: &[&str] = &[];
 const CPP_GATES: &[&str] = &["portable C ABI", "barcode equivalence"];
 const ASM_AVX512_GATES: &[&str] = &["CPUID AVX-512 support", "barcode equivalence"];
 const TRITON_GATES: &[&str] = &[
+    "optional torch dependency",
     "optional triton dependency",
-    "dense SDPA/FlashAttention baseline",
-    "same-budget ablations",
+    "CUDA device",
+    "torch.cdist parity",
 ];
 const PYTORCH_GATES: &[&str] = &[
     "optional torch dependency",
@@ -116,9 +117,9 @@ pub const BACKEND_METADATA: &[BackendMetadata] = &[
     BackendMetadata {
         id: BackendId::Triton,
         name: "triton",
-        active: false,
+        active: true,
         available: false,
-        planned: true,
+        planned: false,
         capabilities: FRAMEWORK_CAPABILITIES,
         gates: TRITON_GATES,
         warnings: OPTIONAL_FRAMEWORK_WARNINGS,

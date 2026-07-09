@@ -49,17 +49,22 @@ def test_asm_avx512_is_active_optional_backend_with_cpu_gate() -> None:
         assert topoml.select_backend("asm_avx512") is None
 
 
-def test_planned_backends_expose_gates_and_are_not_selectable() -> None:
+def test_triton_is_active_optional_backend_with_cuda_runtime_gate() -> None:
+    backends = {backend.id: backend for backend in topoml.available_backends()}
+    metadata = backends["triton"]
+
+    assert metadata.active
+    assert not metadata.available
+    assert not metadata.planned
+    assert "triton_pairwise_l2" in metadata.capabilities
+    assert "cuda" in " ".join(metadata.gates).lower()
+    assert topoml.select_backend("triton") is None
+
+
+def test_no_backends_are_planned_placeholders() -> None:
     backends = {backend.id: backend for backend in topoml.available_backends()}
 
-    for name in ["triton"]:
-        metadata = backends[name]
-
-        assert not metadata.active
-        assert not metadata.available
-        assert metadata.planned
-        assert metadata.gates
-        assert topoml.select_backend(name) is None
+    assert [name for name, metadata in backends.items() if metadata.planned] == []
 
 
 def test_import_topoml_does_not_import_heavy_frameworks() -> None:

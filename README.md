@@ -159,16 +159,17 @@ print(ambient.basis)  # ("x", "y", "z")
 | Python reference | Active | Data-science API and graphs | Python contract tests pass |
 | C++ | Active H0 native path | Portable native extension path | H0 barcode equivalence vs Python and baseline fixtures |
 | ASM AVX-512 | Active hardware-gated distance dispatch | L2-squared hot path | CPUID/XCR0 gate plus NumPy equivalence |
-| Triton | Planned API | GPU schedule kernels for topology-guided ML | Dense SDPA/FlashAttention baseline and same-budget ablations |
+| Triton | Active optional CUDA runtime wrapper | Pairwise L2 topology preprocessing prototype | `torch.cdist` parity when torch, Triton, and CUDA are available |
 | PyTorch | Active optional adapter | Tensor/module adapters | CPU framework CI plus torch.compile-safe behavior |
 | TensorFlow | Active optional adapter | Tensor adapters | CPU framework CI with eager and graph-mode parity |
 
 Active hardware-gated means the implementation exists but only selects when the
 machine and OS expose the required CPU state. Active optional adapter means the
-implementation exists and is CI-gated, but the heavy framework dependency is
-still optional. Planned API means users can inspect the contract and gates, but
-the backend does not execute yet. Unavailable planned backends must fail clearly
-rather than silently falling back to a slower or different implementation.
+implementation exists and is gated, but the heavy framework or CUDA dependency
+is still optional. Planned API means users can inspect the contract and gates,
+but the backend does not execute yet. Unavailable planned backends must fail
+clearly rather than silently falling back to a slower or different
+implementation.
 
 ```python
 result = topoml.select_backend_adapter("triton", raise_unavailable=False)
@@ -188,7 +189,7 @@ The E2E claim benchmark currently verifies:
 - fixed-width `PHFeaturizer` output;
 - prototype cover, nerve, Mapper, and sheaf residual diagnostics;
 - self-contained HTML dashboard export;
-- backend metadata separation between active and planned backends;
+- backend metadata separation between active, runtime-gated, and planned work;
 - import safety for optional heavy stacks;
 - real CPU PyTorch and TensorFlow adapter integration in CI;
 - benchmark-smoke timing records for the active Python reference path.

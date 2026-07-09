@@ -4,7 +4,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def test_planned_backend_source_files_exist():
+def test_backend_source_files_exist():
     expected = [
         ROOT / "backends" / "cuda" / "topology_distance.cu",
         ROOT / "backends" / "cuda" / "warp_reductions.cu",
@@ -13,7 +13,9 @@ def test_planned_backend_source_files_exist():
         ROOT / "backends" / "cpp" / "topoml_native.cpp",
         ROOT / "backends" / "triton" / "topology_distance.py",
         ROOT / "python" / "topoml" / "asm.py",
+        ROOT / "python" / "topoml" / "triton.py",
         ROOT / "python" / "tests" / "test_asm_native_ctypes.py",
+        ROOT / "python" / "tests" / "test_triton_runtime.py",
         ROOT / "python" / "tests" / "test_gpu_backend_semantic_contract.py",
         ROOT / "python" / "tests" / "test_cuda_nvcc_compile.py",
         ROOT / "benchmarks" / "benchmark_asm_distance.py",
