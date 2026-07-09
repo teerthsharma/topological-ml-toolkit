@@ -67,10 +67,10 @@ Ubuntu CI also runs a Linux x86-64 assembly smoke benchmark:
 python benchmarks/benchmark_asm_distance.py --out artifacts/asm-distance.json --points 8 16 --dims 8
 ```
 
-This assembles the CPUID probes and scalar L2 hot path, loads them through
-`ctypes`, compares scalar L2 output against NumPy, and records AVX2/AVX-512F
-feature bits. It is a dispatch and correctness gate, not an AVX-512 speedup
-claim.
+This assembles the CPUID/XCR0 probes, scalar L2 hot path, and AVX-512 L2 hot
+path, loads them through `ctypes`, compares dispatched output against NumPy, and
+records which path actually ran. It is a dispatch and correctness gate, not a
+PH acceleration or speedup claim.
 
 ## ML Adapter Integration Benchmark
 

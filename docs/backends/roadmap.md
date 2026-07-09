@@ -44,18 +44,23 @@ Current verification:
 
 - `python/topoml/asm.py` compiles both assembly sources into a shared library on
   Linux x86-64 and loads them through `ctypes`.
-- `python/tests/test_asm_native_ctypes.py` checks CPUID bit decoding and compares
-  the scalar `topoml_l2_sq_f32_asm` routine against NumPy.
-- `benchmarks/benchmark_asm_distance.py` writes a JSON timing and CPU-feature
-  smoke artifact.
+- `python/tests/test_asm_native_ctypes.py` checks CPUID and XCR0 decoding,
+  verifies that the AVX-512 symbol is exported, and compares dispatched
+  L2-squared output against NumPy across multiple vector lengths.
+- `benchmarks/benchmark_asm_distance.py` writes a JSON timing, dispatch-path,
+  and CPU-feature smoke artifact.
 - GitHub Actions runs this inside the native smoke job.
 
 Gate:
 
-- CPUID feature detection;
-- safe fallback;
+- CPUID/XCR0 feature detection;
+- safe scalar fallback when AVX-512 state is unavailable;
 - tiny unsafe/FFI surface;
 - same barcode output as Rust and reference library.
+
+The active ASM claim is distance dispatch only. Barcode reduction, simplex
+filtering, and broad PH acceleration remain gated until they have equivalence
+tests and benchmark baselines.
 
 ## Triton
 

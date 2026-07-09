@@ -15,7 +15,8 @@ from topoml.backends import (
 )
 
 
-PLANNED_BACKENDS = {"asm_avx512", "triton"}
+PLANNED_BACKENDS = {"triton"}
+ACTIVE_HARDWARE_BACKENDS = {"asm_avx512"}
 ACTIVE_OPTIONAL_BACKENDS = {"pytorch", "tensorflow"}
 
 
@@ -59,6 +60,7 @@ def test_active_backend_adapters_are_metadata_available() -> None:
     assert adapters["safe_rust"].status == "active"
     assert adapters["python_reference"].status == "active"
     assert adapters["cpp"].status == "active"
+    assert adapters["asm_avx512"].status == "active"
     assert adapters["pytorch"].status == "active"
     assert adapters["tensorflow"].status == "active"
     assert adapters["safe_rust"].validate_available().available
@@ -83,6 +85,23 @@ def test_active_optional_framework_adapters_report_dependency_availability() -> 
             assert "required gates" in result.message.lower()
 
 
+def test_active_hardware_adapters_report_runtime_gate_availability() -> None:
+    adapters = {adapter.id: adapter for adapter in backend_adapters()}
+
+    for backend_id in ACTIVE_HARDWARE_BACKENDS:
+        adapter = adapters[backend_id]
+
+        assert adapter.status == "active"
+        assert "cpuid" in " ".join(adapter.required_gates + adapter.warnings).lower()
+        if adapter.available:
+            assert adapter.availability().available
+        else:
+            result = select_backend_adapter(backend_id, raise_unavailable=False)
+            assert result.adapter.status == "active"
+            assert not result.available
+            assert "required gates" in result.message.lower()
+
+
 def test_selecting_unavailable_planned_backend_returns_clear_result() -> None:
     result = select_backend_adapter("triton", raise_unavailable=False)
 
@@ -93,8 +112,8 @@ def test_selecting_unavailable_planned_backend_returns_clear_result() -> None:
 
 
 def test_selecting_unavailable_planned_backend_can_raise_clear_error() -> None:
-    with pytest.raises(BackendUnavailableError, match="asm_avx512.*required gates"):
-        select_backend_adapter("asm-avx512")
+    with pytest.raises(BackendUnavailableError, match="triton.*required gates"):
+        select_backend_adapter("triton")
 
 
 def test_planned_backend_adapters_cannot_execute_without_gates() -> None:

@@ -168,9 +168,10 @@ predicted = model.predict(point_clouds, base_features=tabular_features)
 ### Backend adapters
 
 `topoml.backend_adapters()` returns API-level backend contracts for active,
-active-optional, and planned backends. Active-optional backends are implemented
-but depend on optional packages. Planned backends are discoverable but
-unavailable until their correctness and benchmark gates pass.
+hardware-gated, package-optional, and planned backends. Hardware-gated and
+package-optional backends are implemented but may be unavailable on the current
+machine. Planned backends are discoverable but unavailable until their
+correctness and benchmark gates pass.
 
 ```python
 result = topoml.select_backend_adapter("triton", raise_unavailable=False)
@@ -181,7 +182,7 @@ print(result.missing_gates)
 Strict selection raises `BackendUnavailableError` for a planned backend:
 
 ```python
-topoml.select_backend_adapter("asm_avx512")
+topoml.select_backend_adapter("triton")
 ```
 
 ### Framework tensor adapters

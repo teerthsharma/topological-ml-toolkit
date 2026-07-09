@@ -25,6 +25,15 @@ class CpuFeatureProbe:
     leaf7_ebx: int
     avx2: bool
     avx512f: bool
+    avx512f_os: bool
+    xcr0: int
+
+
+@dataclass(frozen=True)
+class AsmDistanceResult:
+    value: float
+    backend: str
+    used_avx512: bool
 
 
 class AsmNativeBackend:
@@ -35,22 +44,42 @@ class AsmNativeBackend:
         self._lib = ctypes.CDLL(str(self.library))
         self._lib.topoml_cpuid_leaf7_ebx.argtypes = []
         self._lib.topoml_cpuid_leaf7_ebx.restype = ctypes.c_uint32
+        self._lib.topoml_xgetbv0.argtypes = []
+        self._lib.topoml_xgetbv0.restype = ctypes.c_uint64
         self._lib.topoml_has_avx2.argtypes = []
         self._lib.topoml_has_avx2.restype = ctypes.c_uint32
         self._lib.topoml_has_avx512f.argtypes = []
         self._lib.topoml_has_avx512f.restype = ctypes.c_uint32
+        self._lib.topoml_has_avx512f_os.argtypes = []
+        self._lib.topoml_has_avx512f_os.restype = ctypes.c_uint32
         self._lib.topoml_l2_sq_f32_asm.argtypes = [
             ctypes.POINTER(ctypes.c_float),
             ctypes.POINTER(ctypes.c_float),
             ctypes.c_long,
         ]
         self._lib.topoml_l2_sq_f32_asm.restype = ctypes.c_float
+        if self.has_symbol("topoml_l2_sq_f32_avx512"):
+            self._lib.topoml_l2_sq_f32_avx512.argtypes = [
+                ctypes.POINTER(ctypes.c_float),
+                ctypes.POINTER(ctypes.c_float),
+                ctypes.c_long,
+            ]
+            self._lib.topoml_l2_sq_f32_avx512.restype = ctypes.c_float
+
+    def has_symbol(self, name: str) -> bool:
+        try:
+            getattr(self._lib, name)
+        except AttributeError:
+            return False
+        return True
 
     def cpu_features(self) -> CpuFeatureProbe:
         leaf7 = int(self._lib.topoml_cpuid_leaf7_ebx())
+        xcr0 = int(self._lib.topoml_xgetbv0())
         avx2 = bool(self._lib.topoml_has_avx2())
         avx512f = bool(self._lib.topoml_has_avx512f())
-        return CpuFeatureProbe(leaf7_ebx=leaf7, avx2=avx2, avx512f=avx512f)
+        avx512f_os = bool(self._lib.topoml_has_avx512f_os())
+        return CpuFeatureProbe(leaf7_ebx=leaf7, avx2=avx2, avx512f=avx512f, avx512f_os=avx512f_os, xcr0=xcr0)
 
     def l2_sq_f32(self, left: np.ndarray, right: np.ndarray) -> float:
         lhs = _as_vector(left)
@@ -64,6 +93,23 @@ class AsmNativeBackend:
                 ctypes.c_long(lhs.size),
             )
         )
+
+    def l2_sq_f32_dispatched(self, left: np.ndarray, right: np.ndarray) -> AsmDistanceResult:
+        lhs = _as_vector(left)
+        rhs = _as_vector(right)
+        if lhs.shape != rhs.shape:
+            raise ValueError("left and right vectors must have the same shape")
+        features = self.cpu_features()
+        if features.avx512f_os and self.has_symbol("topoml_l2_sq_f32_avx512"):
+            value = float(
+                self._lib.topoml_l2_sq_f32_avx512(
+                    lhs.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+                    rhs.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+                    ctypes.c_long(lhs.size),
+                )
+            )
+            return AsmDistanceResult(value=value, backend="asm-avx512", used_avx512=True)
+        return AsmDistanceResult(value=self.l2_sq_f32(lhs, rhs), backend="asm-scalar", used_avx512=False)
 
 
 def build_asm_native_backend(

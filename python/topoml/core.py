@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import importlib.util
 from itertools import combinations
+import platform
+import shutil
 from typing import Iterable
 
 import numpy as np
@@ -18,6 +19,14 @@ class BackendMetadata:
     capabilities: tuple[str, ...]
     gates: tuple[str, ...] = ()
     warnings: tuple[str, ...] = ()
+
+
+def _asm_backend_available() -> bool:
+    return (
+        platform.system().lower() == "linux"
+        and platform.machine().lower() in {"x86_64", "amd64"}
+        and any(shutil.which(candidate) for candidate in ("cc", "gcc", "clang"))
+    )
 
 
 _BACKEND_METADATA: tuple[BackendMetadata, ...] = (
@@ -49,12 +58,12 @@ _BACKEND_METADATA: tuple[BackendMetadata, ...] = (
     BackendMetadata(
         id="asm_avx512",
         name="ASM AVX-512",
-        active=False,
-        available=False,
-        planned=True,
-        capabilities=("simd_acceleration",),
-        gates=("CPUID AVX-512 support", "barcode correctness equivalence"),
-        warnings=("planned only", "missing implementation", "CPUID gate", "correctness gate"),
+        active=True,
+        available=_asm_backend_available(),
+        planned=False,
+        capabilities=("asm_l2_sq_f32", "asm_l2_sq_f32_avx512", "cpuid_dispatch", "simd_acceleration"),
+        gates=("Linux x86-64 C compiler", "CPUID AVX-512F runtime dispatch", "NumPy distance equivalence"),
+        warnings=("CPUID gate", "correctness gate"),
     ),
     BackendMetadata(
         id="triton",
@@ -74,7 +83,7 @@ _BACKEND_METADATA: tuple[BackendMetadata, ...] = (
         id="pytorch",
         name="PyTorch",
         active=True,
-        available=importlib.util.find_spec("torch") is not None,
+        available=False,
         planned=False,
         capabilities=("tensor_adapter", "activation_capture", "torch_compile_safe_capture"),
         gates=("optional torch dependency", "dense fallback", "torch.compile-safe behavior"),
@@ -84,7 +93,7 @@ _BACKEND_METADATA: tuple[BackendMetadata, ...] = (
         id="tensorflow",
         name="TensorFlow",
         active=True,
-        available=importlib.util.find_spec("tensorflow") is not None,
+        available=False,
         planned=False,
         capabilities=("tensor_adapter", "activation_capture", "eager_graph_parity"),
         gates=("optional tensorflow dependency", "eager parity", "graph-mode parity"),

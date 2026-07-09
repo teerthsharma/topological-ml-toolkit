@@ -44,8 +44,9 @@ fn framework_adapters_are_active_optional_not_planned() {
 fn asm_avx512_metadata_declares_cpu_and_correctness_gates() {
     let metadata = backend_metadata(BackendId::AsmAvx512).expect("ASM metadata should exist");
 
-    assert!(!metadata.active);
-    assert!(metadata.planned);
+    assert!(metadata.active);
+    assert!(!metadata.available);
+    assert!(!metadata.planned);
     assert!(metadata.warnings.contains(&BackendWarning::CpuidGate));
     assert!(metadata.warnings.contains(&BackendWarning::CorrectnessGate));
     assert!(select_backend(BackendId::AsmAvx512).is_none());
@@ -53,13 +54,12 @@ fn asm_avx512_metadata_declares_cpu_and_correctness_gates() {
 
 #[test]
 fn planned_acceleration_backends_are_not_selected() {
-    for id in [BackendId::Triton, BackendId::AsmAvx512] {
-        let metadata = backend_metadata(id).expect("planned backend metadata should exist");
+    let id = BackendId::Triton;
+    let metadata = backend_metadata(id).expect("planned backend metadata should exist");
 
-        assert!(!metadata.active);
-        assert!(!metadata.available);
-        assert!(metadata.planned);
-        assert!(!metadata.gates.is_empty());
-        assert!(select_backend(id).is_none());
-    }
+    assert!(!metadata.active);
+    assert!(!metadata.available);
+    assert!(metadata.planned);
+    assert!(!metadata.gates.is_empty());
+    assert!(select_backend(id).is_none());
 }

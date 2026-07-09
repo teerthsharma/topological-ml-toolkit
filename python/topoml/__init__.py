@@ -20,6 +20,7 @@ from .backends import (
 )
 from .asm import (
     AsmBuildResult,
+    AsmDistanceResult,
     AsmNativeBackend,
     CpuFeatureProbe,
     build_asm_native_backend,
@@ -82,6 +83,7 @@ __all__ = [
     "BackendSelectionResult",
     "BackendUnavailableError",
     "AsmBuildResult",
+    "AsmDistanceResult",
     "AsmNativeBackend",
     "BettiNumbers",
     "BettiCurve",

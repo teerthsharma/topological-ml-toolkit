@@ -21,8 +21,10 @@ def run(points: list[int], dims: int, out: Path) -> dict:
         cloud = rng.normal(size=(n, dims)).astype(np.float32)
         pairs = [(i, j) for i in range(n) for j in range(i + 1, n)]
         start = time.perf_counter()
-        asm_values = [backend.l2_sq_f32(cloud[i], cloud[j]) for i, j in pairs]
+        asm_results = [backend.l2_sq_f32_dispatched(cloud[i], cloud[j]) for i, j in pairs]
         asm_seconds = time.perf_counter() - start
+        asm_values = [result.value for result in asm_results]
+        dispatch_backends = sorted({result.backend for result in asm_results})
         start = time.perf_counter()
         numpy_values = [float(np.sum((cloud[i] - cloud[j]) ** 2, dtype=np.float32)) for i, j in pairs]
         numpy_seconds = time.perf_counter() - start
@@ -30,10 +32,12 @@ def run(points: list[int], dims: int, out: Path) -> dict:
             raise AssertionError(f"ASM L2 mismatch for n={n}, dims={dims}")
         rows.append(
             {
-                "backend": "asm-x86_64-scalar",
+                "backend": "asm-x86_64-dispatched",
                 "points": n,
                 "dims": dims,
                 "pairs": len(pairs),
+                "dispatch_backends": dispatch_backends,
+                "used_avx512": any(result.used_avx512 for result in asm_results),
                 "asm_seconds": round(asm_seconds, 9),
                 "numpy_seconds": round(numpy_seconds, 9),
             }
@@ -45,11 +49,13 @@ def run(points: list[int], dims: int, out: Path) -> dict:
         "compiler": build.compiler,
         "cpu_features": {
             "leaf7_ebx": features.leaf7_ebx,
+            "xcr0": features.xcr0,
             "avx2": features.avx2,
             "avx512f": features.avx512f,
+            "avx512f_os": features.avx512f_os,
         },
         "rows": rows,
-        "claim_scope": "ASM CPUID and scalar L2 correctness smoke; not an AVX-512 speedup claim",
+        "claim_scope": "ASM CPUID/OS-gated scalar-or-AVX-512 L2 correctness smoke; not a persistent-homology or speedup claim",
     }
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, indent=2), encoding="utf-8")

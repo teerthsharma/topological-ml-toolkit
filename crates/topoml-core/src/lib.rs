@@ -78,12 +78,8 @@ const TENSORFLOW_GATES: &[&str] = &[
 ];
 
 const NO_WARNINGS: &[BackendWarning] = &[];
-const ASM_AVX512_WARNINGS: &[BackendWarning] = &[
-    BackendWarning::PlannedOnly,
-    BackendWarning::MissingImplementation,
-    BackendWarning::CpuidGate,
-    BackendWarning::CorrectnessGate,
-];
+const ASM_AVX512_WARNINGS: &[BackendWarning] =
+    &[BackendWarning::CpuidGate, BackendWarning::CorrectnessGate];
 const OPTIONAL_FRAMEWORK_WARNINGS: &[BackendWarning] = &[BackendWarning::OptionalDependency];
 
 pub const BACKEND_METADATA: &[BackendMetadata] = &[
@@ -110,9 +106,9 @@ pub const BACKEND_METADATA: &[BackendMetadata] = &[
     BackendMetadata {
         id: BackendId::AsmAvx512,
         name: "asm_avx512",
-        active: false,
+        active: true,
         available: false,
-        planned: true,
+        planned: false,
         capabilities: ASM_AVX512_CAPABILITIES,
         gates: ASM_AVX512_GATES,
         warnings: ASM_AVX512_WARNINGS,
