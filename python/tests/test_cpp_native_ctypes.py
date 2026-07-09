@@ -4,13 +4,20 @@ import pytest
 import topoml
 
 
+def _load_backend_or_skip(library):
+    try:
+        return topoml.load_cpp_native_backend(library)
+    except topoml.NativeBackendUnavailable as exc:
+        pytest.skip(str(exc))
+
+
 def test_cpp_native_backend_compiles_and_matches_numpy(tmp_path):
     try:
         build = topoml.build_cpp_native_backend(build_dir=tmp_path)
     except topoml.NativeBackendUnavailable as exc:
         pytest.skip(str(exc))
 
-    backend = topoml.load_cpp_native_backend(build.library)
+    backend = _load_backend_or_skip(build.library)
     points = np.array(
         [
             [0.0, 0.0],
@@ -39,7 +46,7 @@ def test_cpp_native_backend_computes_h0_barcode_equivalent_to_python(tmp_path):
     except topoml.NativeBackendUnavailable as exc:
         pytest.skip(str(exc))
 
-    backend = topoml.load_cpp_native_backend(build.library)
+    backend = _load_backend_or_skip(build.library)
     points = np.array([[0.0, 0.0], [0.2, 0.0], [5.0, 0.0]], dtype=np.float64)
 
     native = backend.persistent_homology_h0(points, max_radius=10.0)

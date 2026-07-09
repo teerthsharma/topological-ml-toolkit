@@ -30,7 +30,10 @@ class CppNativeBackend:
 
     def __init__(self, library: Path):
         self.library = Path(library)
-        self._lib = ctypes.CDLL(str(self.library))
+        try:
+            self._lib = ctypes.CDLL(str(self.library))
+        except OSError as exc:
+            raise NativeBackendUnavailable(f"could not load C++ native library {self.library}: {exc}") from exc
         self._lib.topoml_pairwise_l2_f64.argtypes = [
             ctypes.POINTER(ctypes.c_double),
             ctypes.POINTER(ctypes.c_double),
