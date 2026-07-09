@@ -22,15 +22,27 @@ def run_case(n: int, dim: int, radius: float, build_dir: Path) -> dict:
     native_edges = backend.threshold_edges(native_distances, radius=radius)
     native_seconds = time.perf_counter() - native_start
 
+    native_h0_start = time.perf_counter()
+    native_h0 = backend.persistent_homology_h0(points, max_radius=radius)
+    native_h0_seconds = time.perf_counter() - native_h0_start
+
     numpy_start = time.perf_counter()
     numpy_distances = np.linalg.norm(points[:, None, :] - points[None, :, :], axis=2)
     numpy_edges = ((numpy_distances <= radius) & (~np.eye(n, dtype=bool))).astype(np.uint8)
     numpy_seconds = time.perf_counter() - numpy_start
 
+    python_h0_start = time.perf_counter()
+    python_h0 = topoml.persistent_homology(points, max_dim=0, max_radius=radius)
+    python_h0_seconds = time.perf_counter() - python_h0_start
+
     if not np.allclose(native_distances, numpy_distances):
         raise AssertionError("native C++ distances differ from NumPy")
     if not np.array_equal(native_edges, numpy_edges):
         raise AssertionError("native C++ threshold edges differ from NumPy")
+    native_deaths = sorted(pair.death for pair in native_h0.finite_pairs(0) if pair.death is not None)
+    python_deaths = sorted(pair.death for pair in python_h0.finite_pairs(0) if pair.death is not None)
+    if not np.allclose(native_deaths, python_deaths):
+        raise AssertionError("native C++ H0 barcode deaths differ from Python reference")
 
     return {
         "backend": "cpp-native-ctypes",
@@ -39,12 +51,15 @@ def run_case(n: int, dim: int, radius: float, build_dir: Path) -> dict:
         "radius": radius,
         "native_seconds": native_seconds,
         "numpy_seconds": numpy_seconds,
+        "native_h0_seconds": native_h0_seconds,
+        "python_h0_seconds": python_h0_seconds,
+        "native_h0_pairs": len(native_h0.pairs),
         "edge_count": int(native_edges.sum()),
         "compiler": build.compiler,
         "library": str(build.library),
         "python": platform.python_version(),
         "platform": platform.platform(),
-        "claim_scope": "C++ preprocessing ABI correctness and timing smoke, not persistent-homology acceleration",
+        "claim_scope": "C++ preprocessing plus H0 barcode correctness and timing smoke, not H1/H2 persistent-homology acceleration",
     }
 
 

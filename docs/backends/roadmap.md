@@ -12,23 +12,23 @@ source for tests.
 Portable native path for users who cannot use Rust extensions directly.
 
 Current source: `backends/cpp/topoml_native.cpp` defines a C ABI for pairwise
-distance and threshold-edge preprocessing.
+distance, threshold-edge preprocessing, and H0 barcode construction.
 
 Current verification:
 
 - `python/topoml/native.py` compiles the C++ source into a shared library and
   loads it through `ctypes`.
 - `python/tests/test_cpp_native_ctypes.py` compares C++ distances and threshold
-  edges against NumPy.
+  edges against NumPy and H0 barcode deaths against the Python reference.
 - `benchmarks/benchmark_native_distance.py` writes a JSON timing/correctness
-  smoke artifact.
+  smoke artifact for preprocessing and H0 barcode construction.
 - GitHub Actions runs a dedicated `native C++ smoke` job on Ubuntu.
 
 Gate:
 
 - ABI documented;
 - compile/load smoke against NumPy;
-- barcode equivalence against Rust;
+- H1/H2 barcode equivalence against Rust and external TDA baselines;
 - sanitizer-clean test run.
 
 ## ASM

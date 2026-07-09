@@ -46,18 +46,18 @@ reference code, so the artifact separates `cuda_ms` from `cpu_topology_ms`.
 
 The script exits instead of producing fake data when CUDA is unavailable.
 
-## Native C++ Distance Benchmark
+## Native C++ H0 Benchmark
 
-Ubuntu CI runs a native C++ preprocessing smoke benchmark:
+Ubuntu CI runs a native C++ preprocessing and H0 barcode smoke benchmark:
 
 ```powershell
 python benchmarks/benchmark_native_distance.py --out artifacts/native-distance.json --points 8 16
 ```
 
 This compiles the portable C++ C ABI, loads it through `ctypes`, compares
-pairwise distances and threshold edges against NumPy, and writes timing evidence.
-It is a preprocessing correctness/timing smoke, not a persistent-homology
-acceleration claim.
+pairwise distances and threshold edges against NumPy, compares H0 barcode deaths
+against the Python reference, and writes timing evidence. It is an H0 native
+correctness/timing smoke, not an H1/H2 acceleration claim.
 
 ## ASM Distance Benchmark
 

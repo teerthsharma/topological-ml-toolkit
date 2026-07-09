@@ -114,8 +114,8 @@ def _claim_backend_contract() -> dict:
     metadata = {backend.id: backend for backend in topoml.available_backends()}
     active = {backend.id for backend in metadata.values() if backend.active and backend.available}
     planned = {backend.id for backend in metadata.values() if backend.planned and not backend.available}
-    assert {"safe_rust", "python_reference"}.issubset(active)
-    assert {"cpp", "asm_avx512", "triton", "pytorch", "tensorflow"}.issubset(planned)
+    assert {"safe_rust", "python_reference", "cpp"}.issubset(active)
+    assert {"asm_avx512", "triton", "pytorch", "tensorflow"}.issubset(planned)
     assert topoml.select_backend("triton") is None
     adapter_result = topoml.select_backend_adapter("triton", raise_unavailable=False)
     assert adapter_result.adapter.id == "triton"
@@ -162,7 +162,7 @@ def _claim_backend_source_inventory() -> dict:
         sizes[str(path.relative_to(root)).replace("\\", "/")] = size
     return {
         "source_files": sizes,
-        "claim_scope": "backend source plus native C++, Linux x86-64 ASM, external TDA baseline parity, real CPU ML adapter integration, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; runtime selection remains gated",
+        "claim_scope": "active native C++ H0 source plus Linux x86-64 ASM source, external TDA baseline parity, real CPU ML adapter integration, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; non-C++ acceleration remains gated",
     }
 
 
@@ -454,7 +454,7 @@ def run_claims() -> list[ClaimResult]:
         _record("Visual topology gallery documents active Mapper, sheaf, and cover prototypes", _claim_visual_topology_gallery_docs),
         _record("GUI exporter writes a self-contained topology dashboard", _claim_dashboard_export),
         _record("Backend metadata separates active code from planned acceleration", _claim_backend_contract),
-        _record("Planned backend source files exist for CUDA, ASM, C++, and Triton", _claim_backend_source_inventory),
+        _record("Backend source files exist for active C++ and planned CUDA, ASM, and Triton", _claim_backend_source_inventory),
         _record("Importing topoml does not import heavy optional ML/GPU stacks", _claim_import_guard),
         _record("Benchmark runner records active Python-reference timings", _claim_benchmark_record),
     ]

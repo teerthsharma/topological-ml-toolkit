@@ -10,20 +10,21 @@ import topoml
 def test_safe_rust_and_python_reference_are_active_backends() -> None:
     backends = {backend.id: backend for backend in topoml.available_backends()}
 
-    assert backends["safe_rust"].active
-    assert backends["safe_rust"].available
-    assert not backends["safe_rust"].planned
-    assert backends["python_reference"].active
-    assert backends["python_reference"].available
-    assert not backends["python_reference"].planned
+    for name in ["safe_rust", "python_reference", "cpp"]:
+        assert backends[name].active
+        assert backends[name].available
+        assert not backends[name].planned
+
     assert topoml.select_backend("safe_rust").id == "safe_rust"
     assert topoml.select_backend("python_reference").id == "python_reference"
+    assert topoml.select_backend("cpp").id == "cpp"
+    assert "persistent_homology_h0" in backends["cpp"].capabilities
 
 
 def test_planned_backends_expose_gates_and_are_not_selectable() -> None:
     backends = {backend.id: backend for backend in topoml.available_backends()}
 
-    for name in ["cpp", "asm_avx512", "triton", "pytorch", "tensorflow"]:
+    for name in ["asm_avx512", "triton", "pytorch", "tensorflow"]:
         metadata = backends[name]
 
         assert not metadata.active

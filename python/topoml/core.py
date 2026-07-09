@@ -39,12 +39,11 @@ _BACKEND_METADATA: tuple[BackendMetadata, ...] = (
     BackendMetadata(
         id="cpp",
         name="C++",
-        active=False,
-        available=False,
-        planned=True,
-        capabilities=("persistent_homology", "native_extension"),
-        gates=("portable C ABI", "barcode equivalence"),
-        warnings=("planned only", "missing implementation"),
+        active=True,
+        available=True,
+        planned=False,
+        capabilities=("pairwise_l2", "threshold_edges", "persistent_homology_h0", "native_extension"),
+        gates=("portable C ABI", "H0 barcode equivalence"),
     ),
     BackendMetadata(
         id="asm_avx512",

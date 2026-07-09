@@ -10,6 +10,8 @@ from pathlib import Path
 
 import numpy as np
 
+from .core import PersistenceDiagram, PersistencePair
+
 
 @dataclass(frozen=True)
 class NativeBuildResult:
@@ -43,6 +45,16 @@ class CppNativeBackend:
             ctypes.c_double,
         ]
         self._lib.topoml_threshold_edges_u8.restype = ctypes.c_int
+        self._lib.topoml_h0_barcode_f64.argtypes = [
+            ctypes.POINTER(ctypes.c_double),
+            ctypes.POINTER(ctypes.c_double),
+            ctypes.POINTER(ctypes.c_double),
+            ctypes.POINTER(ctypes.c_int64),
+            ctypes.c_int64,
+            ctypes.c_int64,
+            ctypes.c_double,
+        ]
+        self._lib.topoml_h0_barcode_f64.restype = ctypes.c_int
 
     def pairwise_l2(self, points: np.ndarray) -> np.ndarray:
         pts = _as_points(points, dtype=np.float64)
@@ -73,6 +85,34 @@ class CppNativeBackend:
         if code != 0:
             raise NativeBackendUnavailable(f"C++ threshold edges returned error code {code}")
         return edges
+
+    def persistent_homology_h0(self, points: np.ndarray, max_radius: float = float("inf")) -> PersistenceDiagram:
+        pts = _as_points(points, dtype=np.float64)
+        if max_radius < 0.0 or np.isnan(max_radius):
+            raise ValueError("max_radius must be non-negative")
+        births = np.zeros(pts.shape[0], dtype=np.float64)
+        deaths = np.zeros(pts.shape[0], dtype=np.float64)
+        count = ctypes.c_int64(0)
+        code = self._lib.topoml_h0_barcode_f64(
+            pts.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            births.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            deaths.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            ctypes.byref(count),
+            ctypes.c_int64(pts.shape[0]),
+            ctypes.c_int64(pts.shape[1]),
+            ctypes.c_double(float(max_radius)),
+        )
+        if code != 0:
+            raise NativeBackendUnavailable(f"C++ H0 barcode returned error code {code}")
+        pairs = [
+            PersistencePair(
+                dimension=0,
+                birth=float(births[index]),
+                death=None if deaths[index] < 0.0 else float(deaths[index]),
+            )
+            for index in range(count.value)
+        ]
+        return PersistenceDiagram(pairs)
 
 
 def build_cpp_native_backend(

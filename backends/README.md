@@ -1,8 +1,8 @@
 # Backend Contracts
 
-This directory contains backend contracts and early backend source files. The
-files are real CUDA, Assembly, C++, and Triton source, but they are not selected
-by the public package until correctness and benchmark gates pass.
+This directory contains backend contracts and backend source files. C++ now has
+an active H0 native path behind a build/test gate; CUDA, Assembly, and Triton
+remain source-level contracts until their correctness and benchmark gates pass.
 
 ## Source Inventory
 
@@ -10,19 +10,19 @@ by the public package until correctness and benchmark gates pass.
 - `cuda/warp_reductions.cu`: CUDA warp/block reductions and persistence-image accumulation.
 - `asm/x86_64_l2_f32.S`: x86-64 scalar L2-squared ABI reference.
 - `asm/x86_64_dispatch.S`: CPUID probes for AVX2 and AVX-512 gates.
-- `cpp/topoml_native.cpp`: portable C++ C-ABI distance and threshold routines.
+- `cpp/topoml_native.cpp`: portable C++ C-ABI distance, threshold, and H0 barcode routines.
 - `triton/topology_distance.py`: optional Triton JIT pairwise distance prototype.
 
-## Current Native C++ Smoke Gate
+## Current Native C++ Gate
 
-The C++ backend now has a build-tested preprocessing gate:
+The C++ backend now has a build-tested preprocessing and H0 barcode gate:
 
 - `python/topoml/native.py` compiles `cpp/topoml_native.cpp` into a shared library
   and loads it with `ctypes`.
 - `python/topoml/asm.py` compiles the Linux x86-64 assembly probes into a shared
   library and loads them with `ctypes`.
-- `python/tests/test_cpp_native_ctypes.py` verifies pairwise L2 distances and
-  threshold edges against NumPy.
+- `python/tests/test_cpp_native_ctypes.py` verifies pairwise L2 distances,
+  threshold edges, and H0 barcode deaths against the Python reference.
 - `python/tests/test_asm_native_ctypes.py` verifies CPUID bit decoding and the
   scalar ASM L2-squared hot path against NumPy.
 - `benchmarks/benchmark_native_distance.py` emits JSON timing artifacts.
@@ -30,9 +30,9 @@ The C++ backend now has a build-tested preprocessing gate:
   artifacts.
 - CI runs these on Ubuntu in the `native C++ smoke` job.
 
-This is not yet a persistent-homology acceleration claim. It proves the portable
-C ABI and assembly dispatch probes can be built and called correctly for
-preprocessing.
+This is an H0 persistent-homology native path, not a full multidimensional
+persistent-homology acceleration claim. H1/H2 reduction and GPU acceleration
+remain gated.
 
 ## Backend Metadata
 

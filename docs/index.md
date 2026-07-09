@@ -37,9 +37,10 @@ flowchart LR
 
 ## What Is API-Level Roadmap
 
-The repository exposes backend contracts for C++, ASM AVX-512, Triton, PyTorch,
-and TensorFlow. These contracts define capabilities, gates, and warnings. They
-do not claim acceleration until equivalence tests and benchmark baselines pass.
+The repository exposes an active C++ H0 native path plus backend contracts for
+ASM AVX-512, Triton, PyTorch, and TensorFlow. The remaining contracts define
+capabilities, gates, and warnings. They do not claim acceleration until
+equivalence tests and benchmark baselines pass.
 
 ## Learning Path
 

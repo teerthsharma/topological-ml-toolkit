@@ -25,16 +25,17 @@ The current E2E gate verifies:
 - prototype metric-cover, nerve, Mapper, and sheaf residual diagnostics;
 - static self-contained GUI dashboard export;
 - backend metadata that separates active code from planned acceleration;
-- planned backend source inventory for CUDA, Assembly, C++, and Triton;
+- backend source inventory for active C++ and planned CUDA, Assembly, and Triton;
 - import safety for optional ML/GPU stacks;
 - benchmark-smoke timing records for the Python reference path.
 - CI-gated `ripser` and `GUDHI` parity on small Vietoris-Rips fixtures.
 
 ## What Is Not Claimed Yet
 
-The gate does not claim that C++, ASM AVX-512, Triton, PyTorch, or TensorFlow
-backends are implemented. Those backends are roadmap/API-level surfaces until
-their equivalence tests, fallback behavior, and baseline benchmarks pass.
+The gate does not claim that ASM AVX-512, Triton, PyTorch, or TensorFlow
+backends are implemented. C++ is active for H0 barcode construction; H1/H2
+native reduction remains gated until equivalence tests and baseline benchmarks
+pass.
 
 The gate also does not claim a speedup over `ripser`, GUDHI, sklearn, dense
 SDPA, FlashAttention, or any framework kernel. Those comparisons belong in

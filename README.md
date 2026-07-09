@@ -157,7 +157,7 @@ print(ambient.basis)  # ("x", "y", "z")
 | --- | --- | --- | --- |
 | Safe Rust | Active | Bounded exact Vietoris-Rips PH | Known Betti fixtures pass |
 | Python reference | Active | Data-science API and graphs | Python contract tests pass |
-| C++ | Planned API | Portable native extension path | Barcode equivalence vs Rust and ripser/GUDHI |
+| C++ | Active H0 native path | Portable native extension path | H0 barcode equivalence vs Python and baseline fixtures |
 | ASM AVX-512 | Planned API | Distance and reduction hot paths | CPUID gate plus correctness equivalence |
 | Triton | Planned API | GPU schedule kernels for topology-guided ML | Dense SDPA/FlashAttention baseline and same-budget ablations |
 | PyTorch | Planned API | Tensor/module adapters | Dense fallback and torch.compile-safe behavior |

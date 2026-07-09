@@ -15,7 +15,7 @@ from topoml.backends import (
 )
 
 
-PLANNED_BACKENDS = {"cpp", "asm_avx512", "triton", "pytorch", "tensorflow"}
+PLANNED_BACKENDS = {"asm_avx512", "triton", "pytorch", "tensorflow"}
 
 
 def test_import_topoml_does_not_import_optional_backend_stacks() -> None:
@@ -57,8 +57,10 @@ def test_active_backend_adapters_are_metadata_available() -> None:
 
     assert adapters["safe_rust"].status == "active"
     assert adapters["python_reference"].status == "active"
+    assert adapters["cpp"].status == "active"
     assert adapters["safe_rust"].validate_available().available
     assert adapters["python_reference"].validate_available().available
+    assert adapters["cpp"].validate_available().available
 
 
 def test_selecting_unavailable_planned_backend_returns_clear_result() -> None:
