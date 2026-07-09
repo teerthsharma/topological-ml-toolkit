@@ -39,6 +39,8 @@ nav:
       - Geometry And Symmetry: topology/geometry-and-symmetry.md
   - GUI:
       - Dashboard Export: gui/dashboard.md
+  - Tutorials:
+      - Runnable Tutorials: tutorials/index.md
   - Gallery:
       - Overview: gallery/index.md
       - Noisy Circles: gallery/noisy-circles.md

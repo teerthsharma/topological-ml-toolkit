@@ -553,6 +553,42 @@ def _claim_dashboard_export() -> dict:
     }
 
 
+def _run_example_json(root: Path, args: list[str]) -> dict:
+    result = subprocess.run(
+        [sys.executable, *args],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return json.loads(result.stdout)
+
+
+def _claim_runnable_tutorial_examples() -> dict:
+    root = Path(__file__).resolve().parents[1]
+    point_cloud = _run_example_json(root, ["examples/point_cloud_ph.py"])
+    sklearn = _run_example_json(root, ["examples/sklearn_pipeline.py"])
+    with TemporaryDirectory() as tmp:
+        dashboard_path = Path(tmp) / "tutorial-dashboard.html"
+        dashboard = _run_example_json(root, ["examples/dashboard_export.py", "--out", str(dashboard_path)])
+
+    assert point_cloud["dataset"] == "noisy_circle"
+    assert point_cloud["betti_at_radius"]["beta1"] == 1
+    assert point_cloud["feature_shape"] == [1, 4]
+    assert sklearn["dataset"] == "cluster_bridge"
+    assert isinstance(sklearn["sklearn_available"], bool)
+    if sklearn["sklearn_available"]:
+        assert sklearn["predicted"] == ["near", "near", "far"]
+    assert dashboard["dataset"] == "noisy_circle"
+    assert dashboard["bytes"] > 500
+    return {
+        "point_cloud": point_cloud,
+        "sklearn": sklearn,
+        "dashboard": dashboard,
+        "claim_scope": "runnable tutorial scripts execute and emit JSON evidence; no speedup or model-quality claim",
+    }
+
+
 def run_claims() -> list[ClaimResult]:
     return [
         _record("H0 cluster merges match known Betti numbers", _claim_h0_cluster_merges),
@@ -580,6 +616,7 @@ def run_claims() -> list[ClaimResult]:
             _claim_visual_topology_gallery_docs,
         ),
         _record("GUI exporter writes a self-contained topology dashboard", _claim_dashboard_export),
+        _record("Runnable tutorial examples execute and emit JSON evidence", _claim_runnable_tutorial_examples),
         _record("Backend metadata separates active code from planned acceleration", _claim_backend_contract),
         _record("Backend source files exist for active C++/ASM/CUDA/Triton runtime work", _claim_backend_source_inventory),
         _record("Importing topoml does not import heavy optional ML/GPU stacks", _claim_import_guard),

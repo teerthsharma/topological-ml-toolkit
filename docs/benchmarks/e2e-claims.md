@@ -34,6 +34,8 @@ The current E2E gate verifies:
 - graph-first gallery coverage for prototypes, persistence features, embedding
   graphs, backend runtime gates, topology training, and benchmark evidence;
 - static self-contained GUI dashboard export;
+- runnable tutorial scripts for point-cloud PH, optional sklearn integration,
+  and dashboard export;
 - backend metadata that separates active code from planned acceleration;
 - backend source inventory for active C++, active hardware-gated Assembly,
   active optional CUDA, and active optional Triton runtime work;

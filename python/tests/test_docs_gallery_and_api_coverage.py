@@ -126,3 +126,18 @@ def test_benchmark_dataset_docs_are_explicit() -> None:
         "Claim Boundary",
     ]:
         assert phrase in text
+
+
+def test_runnable_tutorial_docs_cover_example_scripts_and_claim_boundaries() -> None:
+    text = _read_doc("docs/tutorials/index.md")
+    for phrase in [
+        "python examples/point_cloud_ph.py",
+        "python examples/sklearn_pipeline.py",
+        "python examples/dashboard_export.py --out artifacts/tutorial-dashboard.html",
+        "persistent_homology",
+        "make_sklearn_pipeline",
+        "write_dashboard",
+        "```mermaid",
+        "Claim Boundary",
+    ]:
+        assert phrase in text

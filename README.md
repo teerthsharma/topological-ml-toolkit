@@ -184,6 +184,17 @@ circle = topoml.make_noisy_circle(n_samples=64, noise=0.0, random_state=7)
 print(circle.expected_betti)  # {"beta0": 1, "beta1": 1}
 ```
 
+Runnable tutorial scripts:
+
+```powershell
+python examples/point_cloud_ph.py
+python examples/sklearn_pipeline.py
+python examples/dashboard_export.py --out artifacts/tutorial-dashboard.html
+```
+
+Each script emits JSON evidence and is checked by the test suite and E2E claim
+gate. See `docs/tutorials/index.md` for the graph-first walkthroughs.
+
 ## Backend Roadmap
 
 | Backend | Status | Purpose | Gate before claims |
@@ -225,6 +236,8 @@ The E2E claim benchmark currently verifies:
 - optional real sklearn pipeline integration when scikit-learn is installed;
 - graph-first gallery pages with explicit claim boundaries;
 - self-contained HTML dashboard export;
+- runnable tutorial scripts for point-cloud PH, optional sklearn integration,
+  and dashboard export;
 - backend metadata separation between active, runtime-gated, and planned work;
 - import safety for optional heavy stacks;
 - real CPU PyTorch and TensorFlow adapter integration in CI;
