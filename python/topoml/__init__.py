@@ -35,6 +35,14 @@ from .features import (
     activation_signature,
     point_cloud_signature,
 )
+from .datasets import (
+    BenchmarkDataset,
+    list_benchmark_datasets,
+    load_benchmark_dataset,
+    make_cluster_bridge,
+    make_noisy_circle,
+    make_two_circles,
+)
 from .families import TopologyFamily, topology_families, topology_family, topology_family_coverage_matrix
 from .gui import write_dashboard
 from .native import (
@@ -101,6 +109,7 @@ __all__ = [
     "AsmBuildResult",
     "AsmDistanceResult",
     "AsmNativeBackend",
+    "BenchmarkDataset",
     "BraidCrossingSignature",
     "BettiNumbers",
     "BettiCurve",
@@ -154,11 +163,16 @@ __all__ = [
     "graph_signature",
     "interop_add",
     "interop_bundle",
+    "list_benchmark_datasets",
+    "load_benchmark_dataset",
     "load_asm_native_backend",
     "load_cuda_native_backend",
     "load_cpp_native_backend",
     "mapper_graph",
     "make_sklearn_pipeline",
+    "make_cluster_bridge",
+    "make_noisy_circle",
+    "make_two_circles",
     "mesh_euler_characteristic",
     "metric_cover",
     "nerve_graph",

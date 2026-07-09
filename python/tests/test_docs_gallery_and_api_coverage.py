@@ -52,6 +52,12 @@ def test_api_docs_cover_public_surface_added_for_backends_and_training() -> None
         "PHFeaturizer",
         "BettiCurve",
         "PersistenceImage",
+        "BenchmarkDataset",
+        "list_benchmark_datasets",
+        "load_benchmark_dataset",
+        "make_noisy_circle",
+        "make_two_circles",
+        "make_cluster_bridge",
         "metric_cover",
         "nerve_graph",
         "mapper_graph",
@@ -108,3 +114,15 @@ def test_backend_compatibility_matrix_is_explicit() -> None:
         assert backend in text
     for phrase in ["runtime gate", "claim boundary", "fallback", "verification"]:
         assert phrase in text.lower()
+
+
+def test_benchmark_dataset_docs_are_explicit() -> None:
+    text = _read_doc("docs/benchmarks/datasets.md")
+    for phrase in [
+        "make_noisy_circle",
+        "make_two_circles",
+        "make_cluster_bridge",
+        "expected_betti",
+        "Claim Boundary",
+    ]:
+        assert phrase in text

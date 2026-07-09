@@ -69,6 +69,8 @@ Python package: `topoml`
   `TopologyRandomForestClassifier` for topology-augmented training baselines
 - `make_sklearn_pipeline(estimator, ...)` for optional real sklearn `Pipeline`
   integration without importing sklearn during `import topoml`
+- `BenchmarkDataset`, `make_noisy_circle`, `make_two_circles`, and
+  `make_cluster_bridge` for deterministic tutorials and benchmark smoke tests
 - `metric_cover(points, radius)` and `nerve_graph(cover)`
 - `mapper_graph(points, filter_values, intervals, overlap, cluster_radius)`
 - `sheaf_consistency_residual(sections, restrictions)`
@@ -173,6 +175,13 @@ pipeline = topoml.make_sklearn_pipeline(
     max_dim=0,
 )
 pipeline.fit(point_clouds, labels)
+```
+
+Benchmark fixture:
+
+```python
+circle = topoml.make_noisy_circle(n_samples=64, noise=0.0, random_state=7)
+print(circle.expected_betti)  # {"beta0": 1, "beta1": 1}
 ```
 
 ## Backend Roadmap

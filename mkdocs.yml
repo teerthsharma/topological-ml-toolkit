@@ -54,6 +54,7 @@ nav:
       - Finite Topology Dynamics And Braids: gallery/finite-topology-dynamics-and-braids.md
   - Benchmarks:
       - Benchmark Policy: benchmarks/index.md
+      - Benchmark Datasets: benchmarks/datasets.md
       - E2E Claim Gate: benchmarks/e2e-claims.md
   - Backends:
       - Backend Roadmap: backends/roadmap.md

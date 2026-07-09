@@ -111,6 +111,25 @@ def _claim_feature_encoders_and_signatures() -> dict:
     }
 
 
+def _claim_benchmark_datasets() -> dict:
+    names = topoml.list_benchmark_datasets()
+    circle = topoml.make_noisy_circle(n_samples=32, noise=0.0, random_state=7)
+    bridge = topoml.make_cluster_bridge()
+    two = topoml.load_benchmark_dataset("two_circles", n_samples=16, noise=0.0, random_state=3)
+    diagram = topoml.persistent_homology(circle.points, max_dim=1, max_radius=2.0)
+    assert {"cluster_bridge", "noisy_circle", "two_circles"}.issubset(names)
+    assert diagram.betti_at(0.45).beta1 == circle.expected_betti["beta1"]
+    assert bridge.expected_betti["beta0@0.3"] == 2
+    assert two.points.shape == (32, 2)
+    return {
+        "available": list(names),
+        "circle_shape": list(circle.points.shape),
+        "circle_expected_betti": circle.expected_betti,
+        "two_circles_shape": list(two.points.shape),
+        "claim_scope": "deterministic synthetic benchmark fixtures with expected topology metadata, not real-world benchmark coverage",
+    }
+
+
 def _claim_backend_contract() -> dict:
     metadata = {backend.id: backend for backend in topoml.available_backends()}
     active = {backend.id for backend in metadata.values() if backend.active}
@@ -544,6 +563,7 @@ def run_claims() -> list[ClaimResult]:
             "Feature encoders and topology signatures cover diagrams, graphs, and activations",
             _claim_feature_encoders_and_signatures,
         ),
+        _record("Benchmark dataset fixtures expose expected topology metadata", _claim_benchmark_datasets),
         _record(
             "Topology prototype APIs build finite topology, covers, Mapper, sheaf, homotopy, strata, orbit, equivariance, Scott, weak-convergence, dynamics, braid, and mesh diagnostics",
             _claim_topology_prototypes,

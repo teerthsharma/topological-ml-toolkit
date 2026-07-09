@@ -91,6 +91,28 @@ from the image because they do not have finite persistence.
 image = topoml.PersistenceImage(width=16, height=16).fit_transform([diagram])
 ```
 
+### Benchmark datasets
+
+`BenchmarkDataset` is a small immutable fixture container with `name`, `points`,
+`labels`, `expected_betti`, and `metadata` fields.
+
+`list_benchmark_datasets()` returns the names of public deterministic fixtures.
+`load_benchmark_dataset(name, **kwargs)` loads a fixture by name.
+
+```python
+names = topoml.list_benchmark_datasets()
+circle = topoml.load_benchmark_dataset("noisy_circle", n_samples=64, noise=0.0)
+```
+
+Direct constructors are also public:
+
+- `make_noisy_circle(n_samples=64, radius=1.0, noise=0.03, random_state=0)`;
+- `make_two_circles(n_samples=64, radius=1.0, separation=3.0, noise=0.03, random_state=0)`;
+- `make_cluster_bridge(random_state=0)`.
+
+These fixtures are for examples, regression tests, and benchmark smoke records.
+They are not a claim of real-world dataset coverage.
+
 ### Topology signatures
 
 `TopologySignature` is a small typed summary for point clouds, graphs, and model
