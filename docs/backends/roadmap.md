@@ -40,6 +40,16 @@ Current source:
 - `backends/asm/x86_64_l2_f32.S`
 - `backends/asm/x86_64_dispatch.S`
 
+Current verification:
+
+- `python/topoml/asm.py` compiles both assembly sources into a shared library on
+  Linux x86-64 and loads them through `ctypes`.
+- `python/tests/test_asm_native_ctypes.py` checks CPUID bit decoding and compares
+  the scalar `topoml_l2_sq_f32_asm` routine against NumPy.
+- `benchmarks/benchmark_asm_distance.py` writes a JSON timing and CPU-feature
+  smoke artifact.
+- GitHub Actions runs this inside the native smoke job.
+
 Gate:
 
 - CPUID feature detection;

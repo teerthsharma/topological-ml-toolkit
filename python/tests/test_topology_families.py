@@ -27,6 +27,8 @@ def test_topology_family_registry_covers_objective_families():
     assert OBJECTIVE_FAMILY_IDS == set(families)
     assert families["mapper_reeb_contour"].status == "prototype"
     assert "mapper_graph" in families["mapper_reeb_contour"].api_surface
+    assert families["fiber_bundles"].status == "docs"
+    assert "TensorBundleSpec" in families["fiber_bundles"].api_surface
     assert families["point_set"].status == "docs"
 
 

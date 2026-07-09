@@ -19,13 +19,20 @@ The C++ backend now has a build-tested preprocessing gate:
 
 - `python/topoml/native.py` compiles `cpp/topoml_native.cpp` into a shared library
   and loads it with `ctypes`.
+- `python/topoml/asm.py` compiles the Linux x86-64 assembly probes into a shared
+  library and loads them with `ctypes`.
 - `python/tests/test_cpp_native_ctypes.py` verifies pairwise L2 distances and
   threshold edges against NumPy.
+- `python/tests/test_asm_native_ctypes.py` verifies CPUID bit decoding and the
+  scalar ASM L2-squared hot path against NumPy.
 - `benchmarks/benchmark_native_distance.py` emits JSON timing artifacts.
-- CI runs this on Ubuntu in the `native C++ smoke` job.
+- `benchmarks/benchmark_asm_distance.py` emits JSON timing and CPU feature
+  artifacts.
+- CI runs these on Ubuntu in the `native C++ smoke` job.
 
 This is not yet a persistent-homology acceleration claim. It proves the portable
-C ABI can be built and called correctly for preprocessing.
+C ABI and assembly dispatch probes can be built and called correctly for
+preprocessing.
 
 ## Backend Metadata
 
@@ -47,7 +54,8 @@ ASM backends are allowed only behind runtime feature detection and safe fallback
 
 Required checks:
 
-- CPUID gate for AVX-512 or AVX2;
+- CPUID gate for AVX-512 or AVX2, currently smoke-tested through
+  `topoml_cpuid_leaf7_ebx`, `topoml_has_avx2`, and `topoml_has_avx512f`;
 - output barcode equivalence against safe Rust;
 - no unchecked pointer arithmetic outside the FFI boundary;
 - benchmark artifact before speed claim.

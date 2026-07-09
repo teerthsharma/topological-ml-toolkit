@@ -12,6 +12,9 @@ def test_planned_backend_source_files_exist():
         ROOT / "backends" / "asm" / "x86_64_dispatch.S",
         ROOT / "backends" / "cpp" / "topoml_native.cpp",
         ROOT / "backends" / "triton" / "topology_distance.py",
+        ROOT / "python" / "topoml" / "asm.py",
+        ROOT / "python" / "tests" / "test_asm_native_ctypes.py",
+        ROOT / "benchmarks" / "benchmark_asm_distance.py",
     ]
 
     for path in expected:
@@ -26,3 +29,4 @@ def test_optional_backend_sources_are_not_package_imports():
 
     assert "pairwise_l2" not in exported
     assert "topoml_pairwise_l2_f64" not in exported
+    assert "topoml_l2_sq_f32_asm" not in exported

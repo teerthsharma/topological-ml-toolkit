@@ -121,6 +121,8 @@ _FAMILIES: tuple[TopologyFamily, ...] = (
         "Gauge/equivariant ML, layerwise parameter transport, and symmetry defects.",
         "docs",
         "docs/topology/geometry-and-symmetry.md",
+        ("TensorBundleSpec", "interop_bundle", "interop_add"),
+        "E2E TensorBundle interop check",
     ),
     TopologyFamily(
         "groups_actions_quotients",

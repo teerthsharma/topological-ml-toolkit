@@ -211,7 +211,10 @@ improvements unless a benchmark artifact proves those claims.
 
 ### Topology family registry
 
-`topology_families()` exposes the objective taxonomy as public data:
+`topology_families()` exposes the objective taxonomy as public data. The rendered
+coverage dashboard lives at [Topology Family Coverage Matrix](../topology/family-coverage-matrix.md).
+It separates docs-only families, prototype diagnostics, and benchmark evidence so
+the library does not overclaim accelerated topology backends.
 
 ```python
 for family in topoml.topology_families():

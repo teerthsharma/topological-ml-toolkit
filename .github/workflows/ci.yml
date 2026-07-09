@@ -102,10 +102,12 @@ jobs:
           cache: pip
       - name: Install package
         run: python -m pip install -e ".[test]"
-      - name: Compile and test C++ ctypes backend
-        run: python -m pytest python/tests/test_cpp_native_ctypes.py -q
+      - name: Compile and test native ctypes backends
+        run: python -m pytest python/tests/test_cpp_native_ctypes.py python/tests/test_asm_native_ctypes.py -q
       - name: Native distance benchmark smoke
         run: python benchmarks/benchmark_native_distance.py --out artifacts/native-distance.json --points 8 16
+      - name: ASM distance benchmark smoke
+        run: python benchmarks/benchmark_asm_distance.py --out artifacts/asm-distance.json --points 8 16 --dims 8
       - name: Upload native artifact
         uses: actions/upload-artifact@v4
         with:

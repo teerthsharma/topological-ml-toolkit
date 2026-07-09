@@ -142,8 +142,11 @@ def _claim_backend_source_inventory() -> dict:
         root / "backends" / "cpp" / "topoml_native.cpp",
         root / "backends" / "triton" / "topology_distance.py",
         root / "benchmarks" / "benchmark_native_distance.py",
+        root / "benchmarks" / "benchmark_asm_distance.py",
         root / "python" / "topoml" / "native.py",
+        root / "python" / "topoml" / "asm.py",
         root / "python" / "tests" / "test_cpp_native_ctypes.py",
+        root / "python" / "tests" / "test_asm_native_ctypes.py",
     ]
     sizes = {}
     for path in files:
@@ -153,7 +156,7 @@ def _claim_backend_source_inventory() -> dict:
         sizes[str(path.relative_to(root)).replace("\\", "/")] = size
     return {
         "source_files": sizes,
-        "claim_scope": "backend source plus native C++ compile/load smoke coverage; runtime selection remains gated",
+        "claim_scope": "backend source plus native C++ and Linux x86-64 ASM compile/load smoke coverage; runtime selection remains gated",
     }
 
 
