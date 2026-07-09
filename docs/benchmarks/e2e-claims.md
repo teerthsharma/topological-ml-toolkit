@@ -23,7 +23,12 @@ The current E2E gate verifies:
 - fixed-width Betti-curve features from `PHFeaturizer`;
 - `BettiCurve`, `PersistenceImage`, and topology signatures for point clouds,
   graphs, and activations;
-- prototype metric-cover, nerve, Mapper, and sheaf residual diagnostics;
+- prototype metric-cover, nerve, Mapper, sheaf residual, homotopy, strata,
+  orbit, equivariance, Scott fixed-point, and weak-convergence diagnostics;
+- TensorBundle interoperability, topology sample weights, and the
+  dependency-light topology random forest baseline;
+- graph-first gallery coverage for prototypes, persistence features, embedding
+  graphs, backend runtime gates, topology training, and benchmark evidence;
 - static self-contained GUI dashboard export;
 - backend metadata that separates active code from planned acceleration;
 - backend source inventory for active C++, active hardware-gated Assembly,

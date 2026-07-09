@@ -46,11 +46,17 @@ nav:
       - Mapper And Reeb Activation Maps: gallery/mapper-reeb-activation-map.md
       - Sheaf Consistency Residuals: gallery/sheaf-consistency-residuals.md
       - Covers Nerves And Routing: gallery/covers-nerves-routing.md
+      - Persistence Barcode And Betti Curves: gallery/persistence-barcode-betti-curves.md
+      - Manifold Embedding Neighborhood Graph: gallery/manifold-embedding-neighborhood-graph.md
+      - Backend Runtime Gates: gallery/backend-runtime-gates.md
+      - Topology Training Pipeline: gallery/topology-training-pipeline.md
+      - TDA Benchmark Evidence Map: gallery/tda-benchmark-evidence-map.md
   - Benchmarks:
       - Benchmark Policy: benchmarks/index.md
       - E2E Claim Gate: benchmarks/e2e-claims.md
   - Backends:
       - Backend Roadmap: backends/roadmap.md
+      - Compatibility Matrix: backends/compatibility.md
       - Language Mix: backends/language-mix.md
   - Reference:
       - API: reference/api.md

@@ -65,7 +65,7 @@ flowchart TB
 The key engineering question is not whether a cover looks elegant. The question
 is whether it reduces work without hiding important local evidence.
 
-## Benchmark Gate
+## Claim Boundary
 
 A cover-routing claim should report:
 

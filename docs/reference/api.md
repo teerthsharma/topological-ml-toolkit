@@ -185,6 +185,90 @@ gate:
 topoml.select_backend_adapter("triton")
 ```
 
+### Native C++ backend
+
+`build_cpp_native_backend(source=None, build_dir=None, compiler=None)` compiles
+`backends/cpp/topoml_native.cpp` into a shared library when a C++ compiler is
+available. It returns `NativeBuildResult`.
+
+`load_cpp_native_backend(library)` returns `CppNativeBackend`, a `ctypes` wrapper
+with:
+
+- `pairwise_l2(points)`;
+- `threshold_edges(distances, radius)`;
+- `persistent_homology_h0(points, max_radius=inf)`.
+
+```python
+result = topoml.build_cpp_native_backend()
+backend = topoml.load_cpp_native_backend(result.library)
+distances = backend.pairwise_l2(points)
+diagram = backend.persistent_homology_h0(points)
+```
+
+The C++ claim boundary is H0 and preprocessing. H1/H2 equivalence, sanitizer
+runs, and broad acceleration remain benchmark gates.
+
+### ASM backend
+
+`build_asm_native_backend(sources=None, build_dir=None, compiler=None)` compiles
+the x86-64 assembly dispatch library on Linux x86-64. It returns
+`AsmBuildResult`.
+
+`load_asm_native_backend(library)` returns `AsmNativeBackend`, which exposes:
+
+- `cpu_features()` for CPUID/XCR0 gate evidence;
+- `l2_sq_f32(left, right)` for scalar assembly L2-squared distance;
+- `l2_sq_f32_dispatched(left, right)` for AVX-512 dispatch when OS state and
+  symbols are available.
+
+```python
+result = topoml.build_asm_native_backend()
+backend = topoml.load_asm_native_backend(result.library)
+distance = backend.l2_sq_f32_dispatched(left, right)
+```
+
+The ASM claim boundary is distance dispatch. Simplex filtering and PH reduction
+are not active until equivalence tests and benchmarks exist.
+
+### CUDA backend
+
+`build_cuda_native_backend(source=None, build_dir=None, compiler=None)` compiles
+`backends/cuda/topology_distance.cu` with `nvcc` when CUDA tooling is present.
+It returns `CudaBuildResult`.
+
+`load_cuda_native_backend(library)` returns `CudaNativeBackend`, which exposes:
+
+- `pairwise_l2(points)` for CUDA pairwise L2 on `float32` point clouds;
+- `threshold_edges(distances, radius)` for CUDA threshold-edge masks.
+
+```python
+result = topoml.build_cuda_native_backend()
+backend = topoml.load_cuda_native_backend(result.library)
+distances = backend.pairwise_l2(points.astype("float32"))
+edges = backend.threshold_edges(distances, radius=0.5)
+```
+
+The CUDA claim boundary is pairwise L2 and threshold-edge preprocessing. Broad
+GPU persistent homology remains future backend work.
+
+### Triton backend
+
+`triton_runtime_status()` checks whether PyTorch, Triton, and a CUDA device are
+available without forcing those imports during normal `topoml` import.
+
+`triton_pairwise_l2(points, block=1024)` launches the optional Triton pairwise-L2
+kernel when the runtime gate passes.
+
+```python
+status = topoml.triton_runtime_status()
+if status.available:
+    distances = topoml.triton_pairwise_l2(torch_points)
+```
+
+The Triton claim boundary is pairwise L2 parity against dense `torch.cdist` on
+small fixtures. Topology-guided sparse attention requires dense SDPA or
+FlashAttention baselines plus same-budget ablations before any speedup claim.
+
 ### Framework tensor adapters
 
 PyTorch and TensorFlow adapters are active optional adapters. Importing `topoml`

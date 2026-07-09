@@ -402,11 +402,21 @@ def _claim_visual_topology_gallery_docs() -> dict:
         "mapper": root / "docs" / "gallery" / "mapper-reeb-activation-map.md",
         "sheaf": root / "docs" / "gallery" / "sheaf-consistency-residuals.md",
         "cover": root / "docs" / "gallery" / "covers-nerves-routing.md",
+        "persistence_features": root / "docs" / "gallery" / "persistence-barcode-betti-curves.md",
+        "embedding_graph": root / "docs" / "gallery" / "manifold-embedding-neighborhood-graph.md",
+        "runtime_gates": root / "docs" / "gallery" / "backend-runtime-gates.md",
+        "training_pipeline": root / "docs" / "gallery" / "topology-training-pipeline.md",
+        "benchmark_evidence": root / "docs" / "gallery" / "tda-benchmark-evidence-map.md",
     }
     required_phrases = {
         "mapper": ("Mapper graph", "Claim Boundary", "topoml.mapper_graph"),
         "sheaf": ("sheaf_consistency_residual", "Claim Boundary", "Residual"),
-        "cover": ("metric_cover", "Benchmark Gate", "same-budget random"),
+        "cover": ("metric_cover", "Claim Boundary", "same-budget random"),
+        "persistence_features": ("BettiCurve", "PersistenceImage", "Claim Boundary"),
+        "embedding_graph": ("metric_cover", "quadrantChart", "Claim Boundary"),
+        "runtime_gates": ("stateDiagram-v2", "runtime gate", "Claim Boundary"),
+        "training_pipeline": ("TopologyRandomForestClassifier", "journey", "Claim Boundary"),
+        "benchmark_evidence": ("E2E claims", "Artifact JSON/Markdown", "Claim Boundary"),
     }
     evidence = {}
     for key, path in pages.items():
@@ -421,7 +431,7 @@ def _claim_visual_topology_gallery_docs() -> dict:
         }
     return {
         "pages": evidence,
-        "claim_scope": "visual docs for active prototypes with explicit claim boundaries",
+        "claim_scope": "visual docs for active prototypes, feature encoders, runtime gates, training flow, and benchmark evidence with explicit claim boundaries",
     }
 
 
@@ -468,7 +478,10 @@ def run_claims() -> list[ClaimResult]:
         ),
         _record("Topology family coverage registry includes the objective taxonomy", _claim_topology_family_registry),
         _record("PyTorch and TensorFlow adapter APIs import without loading heavy stacks", _claim_framework_adapter_import_safety),
-        _record("Visual topology gallery documents active Mapper, sheaf, and cover prototypes", _claim_visual_topology_gallery_docs),
+        _record(
+            "Visual topology gallery documents prototypes, runtime gates, training, and benchmark evidence",
+            _claim_visual_topology_gallery_docs,
+        ),
         _record("GUI exporter writes a self-contained topology dashboard", _claim_dashboard_export),
         _record("Backend metadata separates active code from planned acceleration", _claim_backend_contract),
         _record("Backend source files exist for active C++/ASM/CUDA/Triton runtime work", _claim_backend_source_inventory),

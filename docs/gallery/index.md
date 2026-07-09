@@ -9,12 +9,12 @@ Active pages:
 3. Mapper and Reeb activation maps.
 4. Sheaf consistency residuals.
 5. Covers, nerves, and routing.
+6. Persistence barcodes, Betti curves, and persistence images.
+7. Manifold embedding neighborhood graphs.
+8. Backend runtime gates.
+9. Topology training pipeline.
+10. TDA benchmark evidence map.
 
-Planned pages:
-
-1. Swiss roll embedding comparison.
-2. Image edge point-cloud fingerprints.
-3. Text embedding topology for topic drift.
-4. Hidden activation topology for model diagnostics.
-5. Training dynamics topology.
-6. Function-space drift.
+Each page uses graph-first documentation and an explicit claim boundary. The
+gallery is meant for data scientists and systems engineers: see the topology,
+then see the API, then see the benchmark gate.
