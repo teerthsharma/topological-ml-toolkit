@@ -15,7 +15,8 @@ from topoml.backends import (
 )
 
 
-PLANNED_BACKENDS = {"asm_avx512", "triton", "pytorch", "tensorflow"}
+PLANNED_BACKENDS = {"asm_avx512", "triton"}
+ACTIVE_OPTIONAL_BACKENDS = {"pytorch", "tensorflow"}
 
 
 def test_import_topoml_does_not_import_optional_backend_stacks() -> None:
@@ -58,17 +59,36 @@ def test_active_backend_adapters_are_metadata_available() -> None:
     assert adapters["safe_rust"].status == "active"
     assert adapters["python_reference"].status == "active"
     assert adapters["cpp"].status == "active"
+    assert adapters["pytorch"].status == "active"
+    assert adapters["tensorflow"].status == "active"
     assert adapters["safe_rust"].validate_available().available
     assert adapters["python_reference"].validate_available().available
     assert adapters["cpp"].validate_available().available
 
 
+def test_active_optional_framework_adapters_report_dependency_availability() -> None:
+    adapters = {adapter.id: adapter for adapter in backend_adapters()}
+
+    for backend_id in ACTIVE_OPTIONAL_BACKENDS:
+        adapter = adapters[backend_id]
+
+        assert adapter.status == "active"
+        assert "optional" in " ".join(adapter.required_gates).lower()
+        if adapter.available:
+            assert adapter.availability().available
+        else:
+            result = select_backend_adapter(backend_id, raise_unavailable=False)
+            assert result.adapter.status == "active"
+            assert not result.available
+            assert "required gates" in result.message.lower()
+
+
 def test_selecting_unavailable_planned_backend_returns_clear_result() -> None:
-    result = select_backend_adapter("pytorch", raise_unavailable=False)
+    result = select_backend_adapter("triton", raise_unavailable=False)
 
     assert not result.available
-    assert result.adapter.id == "pytorch"
-    assert "pytorch" in result.message.lower()
+    assert result.adapter.id == "triton"
+    assert "triton" in result.message.lower()
     assert "required gates" in result.message.lower()
 
 

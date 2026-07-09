@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import importlib.util
 from itertools import combinations
 from typing import Iterable
 
@@ -72,22 +73,22 @@ _BACKEND_METADATA: tuple[BackendMetadata, ...] = (
     BackendMetadata(
         id="pytorch",
         name="PyTorch",
-        active=False,
-        available=False,
-        planned=True,
-        capabilities=("framework_adapter",),
+        active=True,
+        available=importlib.util.find_spec("torch") is not None,
+        planned=False,
+        capabilities=("tensor_adapter", "activation_capture", "torch_compile_safe_capture"),
         gates=("optional torch dependency", "dense fallback", "torch.compile-safe behavior"),
-        warnings=("planned only", "missing implementation", "optional dependency"),
+        warnings=("optional dependency",),
     ),
     BackendMetadata(
         id="tensorflow",
         name="TensorFlow",
-        active=False,
-        available=False,
-        planned=True,
-        capabilities=("framework_adapter",),
+        active=True,
+        available=importlib.util.find_spec("tensorflow") is not None,
+        planned=False,
+        capabilities=("tensor_adapter", "activation_capture", "eager_graph_parity"),
         gates=("optional tensorflow dependency", "eager parity", "graph-mode parity"),
-        warnings=("planned only", "missing implementation", "optional dependency"),
+        warnings=("optional dependency",),
     ),
 )
 

@@ -78,21 +78,13 @@ const TENSORFLOW_GATES: &[&str] = &[
 ];
 
 const NO_WARNINGS: &[BackendWarning] = &[];
-const PLANNED_WARNINGS: &[BackendWarning] = &[
-    BackendWarning::PlannedOnly,
-    BackendWarning::MissingImplementation,
-];
 const ASM_AVX512_WARNINGS: &[BackendWarning] = &[
     BackendWarning::PlannedOnly,
     BackendWarning::MissingImplementation,
     BackendWarning::CpuidGate,
     BackendWarning::CorrectnessGate,
 ];
-const OPTIONAL_FRAMEWORK_WARNINGS: &[BackendWarning] = &[
-    BackendWarning::PlannedOnly,
-    BackendWarning::MissingImplementation,
-    BackendWarning::OptionalDependency,
-];
+const OPTIONAL_FRAMEWORK_WARNINGS: &[BackendWarning] = &[BackendWarning::OptionalDependency];
 
 pub const BACKEND_METADATA: &[BackendMetadata] = &[
     BackendMetadata {
@@ -108,12 +100,12 @@ pub const BACKEND_METADATA: &[BackendMetadata] = &[
     BackendMetadata {
         id: BackendId::Cpp,
         name: "cpp",
-        active: false,
-        available: false,
-        planned: true,
+        active: true,
+        available: true,
+        planned: false,
         capabilities: CPP_CAPABILITIES,
         gates: CPP_GATES,
-        warnings: PLANNED_WARNINGS,
+        warnings: NO_WARNINGS,
     },
     BackendMetadata {
         id: BackendId::AsmAvx512,
@@ -138,9 +130,9 @@ pub const BACKEND_METADATA: &[BackendMetadata] = &[
     BackendMetadata {
         id: BackendId::PyTorch,
         name: "pytorch",
-        active: false,
+        active: true,
         available: false,
-        planned: true,
+        planned: false,
         capabilities: FRAMEWORK_CAPABILITIES,
         gates: PYTORCH_GATES,
         warnings: OPTIONAL_FRAMEWORK_WARNINGS,
@@ -148,9 +140,9 @@ pub const BACKEND_METADATA: &[BackendMetadata] = &[
     BackendMetadata {
         id: BackendId::TensorFlow,
         name: "tensorflow",
-        active: false,
+        active: true,
         available: false,
-        planned: true,
+        planned: false,
         capabilities: FRAMEWORK_CAPABILITIES,
         gates: TENSORFLOW_GATES,
         warnings: OPTIONAL_FRAMEWORK_WARNINGS,

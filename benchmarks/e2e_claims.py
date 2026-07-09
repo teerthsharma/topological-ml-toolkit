@@ -112,17 +112,20 @@ def _claim_feature_encoders_and_signatures() -> dict:
 
 def _claim_backend_contract() -> dict:
     metadata = {backend.id: backend for backend in topoml.available_backends()}
-    active = {backend.id for backend in metadata.values() if backend.active and backend.available}
+    active = {backend.id for backend in metadata.values() if backend.active}
+    available = {backend.id for backend in metadata.values() if backend.active and backend.available}
     planned = {backend.id for backend in metadata.values() if backend.planned and not backend.available}
-    assert {"safe_rust", "python_reference", "cpp"}.issubset(active)
-    assert {"asm_avx512", "triton", "pytorch", "tensorflow"}.issubset(planned)
+    assert {"safe_rust", "python_reference", "cpp", "pytorch", "tensorflow"}.issubset(active)
+    assert {"safe_rust", "python_reference", "cpp"}.issubset(available)
+    assert {"asm_avx512", "triton"}.issubset(planned)
     assert topoml.select_backend("triton") is None
     adapter_result = topoml.select_backend_adapter("triton", raise_unavailable=False)
     assert adapter_result.adapter.id == "triton"
     assert not adapter_result.available
     assert adapter_result.missing_gates
     return {
-        "active": sorted(active),
+        "active_implemented": sorted(active),
+        "active_available": sorted(available),
         "planned_unavailable": sorted(planned),
         "strict_adapter_example": {
             "id": adapter_result.adapter.id,
@@ -162,7 +165,7 @@ def _claim_backend_source_inventory() -> dict:
         sizes[str(path.relative_to(root)).replace("\\", "/")] = size
     return {
         "source_files": sizes,
-        "claim_scope": "active native C++ H0 source plus Linux x86-64 ASM source, external TDA baseline parity, real CPU ML adapter integration, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; non-C++ acceleration remains gated",
+        "claim_scope": "active native C++ H0 source, active optional PyTorch/TensorFlow adapters, Linux x86-64 ASM source, external TDA baseline parity, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; ASM/Triton/CUDA acceleration remains gated",
     }
 
 

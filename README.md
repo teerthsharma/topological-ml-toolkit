@@ -22,7 +22,7 @@ people who already build sklearn, PyTorch, TensorFlow, and Rust systems.
   `PHFeaturizer`.
 - Keep active claims tied to tests and E2E benchmark artifacts.
 - Expose backend contracts for Safe Rust, Python reference, C++, ASM AVX-512,
-  Triton, PyTorch, and TensorFlow without pretending planned backends are done.
+  Triton, PyTorch, and TensorFlow without pretending gated acceleration is done.
 
 ## Why Topology Helps ML
 
@@ -160,12 +160,14 @@ print(ambient.basis)  # ("x", "y", "z")
 | C++ | Active H0 native path | Portable native extension path | H0 barcode equivalence vs Python and baseline fixtures |
 | ASM AVX-512 | Planned API | Distance and reduction hot paths | CPUID gate plus correctness equivalence |
 | Triton | Planned API | GPU schedule kernels for topology-guided ML | Dense SDPA/FlashAttention baseline and same-budget ablations |
-| PyTorch | Planned API | Tensor/module adapters | Dense fallback and torch.compile-safe behavior |
-| TensorFlow | Planned API | Tensor adapters | Eager and graph-mode parity |
+| PyTorch | Active optional adapter | Tensor/module adapters | CPU framework CI plus torch.compile-safe behavior |
+| TensorFlow | Active optional adapter | Tensor adapters | CPU framework CI with eager and graph-mode parity |
 
-Planned API means users can inspect the contract and gates, but the backend does
-not execute yet. Unavailable planned backends must fail clearly rather than
-silently falling back to a slower or different implementation.
+Active optional adapter means the implementation exists and is CI-gated, but the
+heavy framework dependency is still optional. Planned API means users can inspect
+the contract and gates, but the backend does not execute yet. Unavailable
+planned backends must fail clearly rather than silently falling back to a slower
+or different implementation.
 
 ```python
 result = topoml.select_backend_adapter("triton", raise_unavailable=False)
@@ -187,6 +189,7 @@ The E2E claim benchmark currently verifies:
 - self-contained HTML dashboard export;
 - backend metadata separation between active and planned backends;
 - import safety for optional heavy stacks;
+- real CPU PyTorch and TensorFlow adapter integration in CI;
 - benchmark-smoke timing records for the active Python reference path.
 - CI-gated parity against `ripser` and `GUDHI` on small Vietoris-Rips
   fixtures.

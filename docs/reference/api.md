@@ -167,9 +167,10 @@ predicted = model.predict(point_clouds, base_features=tabular_features)
 
 ### Backend adapters
 
-`topoml.backend_adapters()` returns API-level backend contracts for active and
-planned backends. Planned backends are discoverable but unavailable until their
-correctness and benchmark gates pass.
+`topoml.backend_adapters()` returns API-level backend contracts for active,
+active-optional, and planned backends. Active-optional backends are implemented
+but depend on optional packages. Planned backends are discoverable but
+unavailable until their correctness and benchmark gates pass.
 
 ```python
 result = topoml.select_backend_adapter("triton", raise_unavailable=False)
@@ -185,9 +186,9 @@ topoml.select_backend_adapter("asm_avx512")
 
 ### Framework tensor adapters
 
-PyTorch and TensorFlow adapters are optional. Importing `topoml` does not import
-`torch` or `tensorflow`; the adapters load those frameworks only when conversion
-or capture methods run.
+PyTorch and TensorFlow adapters are active optional adapters. Importing `topoml`
+does not import `torch` or `tensorflow`; the adapters load those frameworks only
+when conversion or capture methods run.
 
 ```python
 from topoml.adapters import TorchTensorAdapter, TensorFlowTensorAdapter

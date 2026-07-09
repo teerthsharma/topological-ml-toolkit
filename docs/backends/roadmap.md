@@ -96,8 +96,8 @@ Gate:
 
 ## PyTorch and TensorFlow
 
-Adapters, not core dependencies. Use tensor exchange and model activation capture
-without forcing heavy frameworks onto basic users.
+Active optional adapters, not core dependencies. Use tensor exchange and model
+activation capture without forcing heavy frameworks onto basic users.
 
 Current API:
 
@@ -125,3 +125,7 @@ Current CI integration:
   `tf.function` parity for the same topology signature.
 - `benchmarks/benchmark_ml_adapters.py` emits a JSON artifact with framework
   versions, dtype/device metadata, signature values, and timing smoke records.
+
+These adapters are active for tensor conversion and activation topology
+signatures. They do not claim framework-native persistent-homology kernels,
+training-quality improvements, or sparse-attention speedups.

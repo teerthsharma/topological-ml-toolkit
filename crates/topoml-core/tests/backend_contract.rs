@@ -11,6 +11,36 @@ fn safe_rust_backend_is_active_and_selectable() {
 }
 
 #[test]
+fn cpp_backend_metadata_is_active_after_native_h0_gate() {
+    let selected =
+        select_backend(BackendId::Cpp).expect("C++ backend should select after H0 native gate");
+
+    assert_eq!(selected.id, BackendId::Cpp);
+    assert!(selected.active);
+    assert!(selected.available);
+    assert!(!selected.planned);
+}
+
+#[test]
+fn framework_adapters_are_active_optional_not_planned() {
+    for id in [BackendId::PyTorch, BackendId::TensorFlow] {
+        let metadata = backend_metadata(id).expect("framework metadata should exist");
+
+        assert!(metadata.active);
+        assert!(!metadata.available);
+        assert!(!metadata.planned);
+        assert!(metadata
+            .warnings
+            .contains(&BackendWarning::OptionalDependency));
+        assert!(!metadata.warnings.contains(&BackendWarning::PlannedOnly));
+        assert!(!metadata
+            .warnings
+            .contains(&BackendWarning::MissingImplementation));
+        assert!(select_backend(id).is_none());
+    }
+}
+
+#[test]
 fn asm_avx512_metadata_declares_cpu_and_correctness_gates() {
     let metadata = backend_metadata(BackendId::AsmAvx512).expect("ASM metadata should exist");
 
@@ -22,13 +52,8 @@ fn asm_avx512_metadata_declares_cpu_and_correctness_gates() {
 }
 
 #[test]
-fn planned_native_and_framework_backends_are_not_selected() {
-    for id in [
-        BackendId::Cpp,
-        BackendId::Triton,
-        BackendId::PyTorch,
-        BackendId::TensorFlow,
-    ] {
+fn planned_acceleration_backends_are_not_selected() {
+    for id in [BackendId::Triton, BackendId::AsmAvx512] {
         let metadata = backend_metadata(id).expect("planned backend metadata should exist");
 
         assert!(!metadata.active);

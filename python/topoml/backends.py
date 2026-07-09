@@ -92,7 +92,7 @@ def select_backend_adapter(backend_id: str, *, raise_unavailable: bool = True) -
 
 
 def _adapter_from_metadata(metadata: Any) -> BackendAdapter:
-    status: BackendStatus = "active" if metadata.active and metadata.available else "planned"
+    status: BackendStatus = "active" if metadata.active else "planned"
     return BackendAdapter(
         id=metadata.id,
         status=status,

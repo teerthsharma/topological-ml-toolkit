@@ -1,30 +1,39 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 import subprocess
 import sys
 
 import topoml
 
 
-def test_safe_rust_and_python_reference_are_active_backends() -> None:
+def test_safe_rust_python_cpp_and_framework_adapters_are_active_backends() -> None:
     backends = {backend.id: backend for backend in topoml.available_backends()}
 
-    for name in ["safe_rust", "python_reference", "cpp"]:
+    for name in ["safe_rust", "python_reference", "cpp", "pytorch", "tensorflow"]:
         assert backends[name].active
-        assert backends[name].available
         assert not backends[name].planned
 
+    for name in ["safe_rust", "python_reference", "cpp"]:
+        assert backends[name].available
+
+    assert backends["pytorch"].available == (importlib.util.find_spec("torch") is not None)
+    assert backends["tensorflow"].available == (importlib.util.find_spec("tensorflow") is not None)
     assert topoml.select_backend("safe_rust").id == "safe_rust"
     assert topoml.select_backend("python_reference").id == "python_reference"
     assert topoml.select_backend("cpp").id == "cpp"
+    if backends["pytorch"].available:
+        assert topoml.select_backend("pytorch").id == "pytorch"
+    if backends["tensorflow"].available:
+        assert topoml.select_backend("tensorflow").id == "tensorflow"
     assert "persistent_homology_h0" in backends["cpp"].capabilities
 
 
 def test_planned_backends_expose_gates_and_are_not_selectable() -> None:
     backends = {backend.id: backend for backend in topoml.available_backends()}
 
-    for name in ["asm_avx512", "triton", "pytorch", "tensorflow"]:
+    for name in ["asm_avx512", "triton"]:
         metadata = backends[name]
 
         assert not metadata.active

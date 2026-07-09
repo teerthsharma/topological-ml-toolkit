@@ -27,15 +27,16 @@ The current E2E gate verifies:
 - backend metadata that separates active code from planned acceleration;
 - backend source inventory for active C++ and planned CUDA, Assembly, and Triton;
 - import safety for optional ML/GPU stacks;
+- active optional PyTorch and TensorFlow adapter metadata;
 - benchmark-smoke timing records for the Python reference path.
 - CI-gated `ripser` and `GUDHI` parity on small Vietoris-Rips fixtures.
 
 ## What Is Not Claimed Yet
 
-The gate does not claim that ASM AVX-512, Triton, PyTorch, or TensorFlow
-backends are implemented. C++ is active for H0 barcode construction; H1/H2
-native reduction remains gated until equivalence tests and baseline benchmarks
-pass.
+The gate does not claim that ASM AVX-512 or Triton backends are implemented.
+C++ is active for H0 barcode construction. PyTorch and TensorFlow are active
+optional tensor/activation adapters. H1/H2 native reduction and framework-native
+PH kernels remain gated until equivalence tests and baseline benchmarks pass.
 
 The gate also does not claim a speedup over `ripser`, GUDHI, sklearn, dense
 SDPA, FlashAttention, or any framework kernel. Those comparisons belong in
