@@ -51,6 +51,7 @@ nav:
       - Backend Runtime Gates: gallery/backend-runtime-gates.md
       - Topology Training Pipeline: gallery/topology-training-pipeline.md
       - TDA Benchmark Evidence Map: gallery/tda-benchmark-evidence-map.md
+      - Finite Topology Dynamics And Braids: gallery/finite-topology-dynamics-and-braids.md
   - Benchmarks:
       - Benchmark Policy: benchmarks/index.md
       - E2E Claim Gate: benchmarks/e2e-claims.md

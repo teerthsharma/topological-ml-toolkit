@@ -394,6 +394,57 @@ r_j = |\phi_j(x_n) - \phi_j(x)|
 It also reports the strong norm residual so projection-level convergence is not
 confused with full norm convergence.
 
+`topoml.finite_topology_signature(universe, open_sets)` checks finite open-set
+axioms, connectedness, and basic separation properties:
+
+```python
+signature = topoml.finite_topology_signature(
+    universe={"a", "b"},
+    open_sets=[set(), {"a"}, {"a", "b"}],
+)
+```
+
+It reports whether the collection is a topology, whether the finite space is
+connected, and whether it satisfies \(T_0\) and \(T_1\). This is a finite
+open-set lattice diagnostic, not a general-purpose point-set topology prover.
+
+`topoml.dynamical_signature(values)` summarizes a one-dimensional sampled
+trajectory such as a loss curve, scheduler metric, or online-learning signal.
+It reports sign-change critical indices, descent fraction, plateau count,
+recurrence count, and final drift.
+
+```python
+dyn = topoml.dynamical_signature([3.0, 2.0, 1.2, 1.6, 1.1, 1.1, 1.4])
+```
+
+This is the first Morse/Conley-style surface: finite critical-event diagnostics,
+not a full invariant-set decomposition.
+
+`topoml.braid_crossing_signature(strands)` reads planar sampled strands shaped
+as `(time, strands, 2)` and records adjacent crossing words such as
+`("sigma1",)`.
+
+```python
+braid = topoml.braid_crossing_signature(strands)
+```
+
+It is useful for trajectory interleavings, thread traces, and attention-head
+crossing sketches. It is not a complete knot polynomial or link invariant.
+
+`topoml.mesh_euler_characteristic(vertices, edges, faces)` returns a finite
+mesh summary:
+
+\[
+\chi = |V| - |E| + |F|
+\]
+
+For closed orientable surfaces it also reports genus when the Euler formula is
+well-defined.
+
+```python
+mesh = topoml.mesh_euler_characteristic(vertices, edges, faces)
+```
+
 ### `topoml.write_dashboard(path, title, diagram=None, feature_matrix=None, metadata=None)`
 
 Writes a self-contained HTML dashboard for local inspection or CI artifacts.

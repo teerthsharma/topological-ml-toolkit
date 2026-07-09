@@ -14,6 +14,7 @@ Active pages:
 8. Backend runtime gates.
 9. Topology training pipeline.
 10. TDA benchmark evidence map.
+11. Finite topology, dynamics, braids, and meshes.
 
 Each page uses graph-first documentation and an explicit claim boundary. The
 gallery is meant for data scientists and systems engineers: see the topology,

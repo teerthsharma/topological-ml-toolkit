@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import deque
 from dataclasses import dataclass
 from itertools import combinations
-from typing import Callable, Mapping, Sequence
+from typing import Callable, Iterable, Mapping, Sequence
 
 import numpy as np
 
@@ -88,6 +88,43 @@ class WeakConvergenceResidual:
     max_residual: float
     mean_residual: float
     strong_residual: float
+
+
+@dataclass(frozen=True)
+class FiniteTopologySignature:
+    n_points: int
+    n_open_sets: int
+    is_topology: bool
+    is_connected: bool
+    is_t0: bool
+    is_t1: bool
+    violations: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class DynamicalSignature:
+    critical_indices: tuple[int, ...]
+    descent_fraction: float
+    plateau_count: int
+    recurrence_count: int
+    final_drift: float
+
+
+@dataclass(frozen=True)
+class BraidCrossingSignature:
+    crossing_count: int
+    braid_word: tuple[str, ...]
+    pair_counts: dict[str, int]
+
+
+@dataclass(frozen=True)
+class MeshEulerSignature:
+    vertices: int
+    edges: int
+    faces: int
+    euler_characteristic: int
+    closed_orientable: bool
+    genus: int | None
 
 
 @dataclass(frozen=True)
@@ -391,6 +428,147 @@ def weak_convergence_residual(
     )
 
 
+def finite_topology_signature(
+    universe: Iterable[object],
+    open_sets: Sequence[Iterable[object]],
+) -> FiniteTopologySignature:
+    points = frozenset(universe)
+    opens = frozenset(frozenset(item) for item in open_sets)
+    if not points:
+        raise ValueError("universe must be non-empty")
+    if not opens:
+        raise ValueError("open_sets must be non-empty")
+    violations: list[str] = []
+    if any(not item.issubset(points) for item in opens):
+        violations.append("open set contains points outside the universe")
+    if frozenset() not in opens:
+        violations.append("empty set is not open")
+    if points not in opens:
+        violations.append("universe is not open")
+    for left, right in combinations(opens, 2):
+        if left | right not in opens:
+            violations.append("open sets are not closed under finite union")
+            break
+    for left, right in combinations(opens, 2):
+        if left & right not in opens:
+            violations.append("open sets are not closed under finite intersection")
+            break
+    is_topology = not violations
+    is_connected = True
+    if is_topology:
+        for item in opens:
+            if item and item != points and (points - item) in opens:
+                is_connected = False
+                break
+    is_t0 = _finite_t0(points, opens) if is_topology else False
+    is_t1 = _finite_t1(points, opens) if is_topology else False
+    return FiniteTopologySignature(
+        n_points=len(points),
+        n_open_sets=len(opens),
+        is_topology=is_topology,
+        is_connected=is_connected,
+        is_t0=is_t0,
+        is_t1=is_t1,
+        violations=tuple(violations),
+    )
+
+
+def dynamical_signature(
+    values: Sequence[float],
+    *,
+    recurrence_tolerance: float = 1e-9,
+) -> DynamicalSignature:
+    series = np.asarray(values, dtype=float).reshape(-1)
+    if series.size < 2:
+        raise ValueError("values must contain at least two samples")
+    if not np.isfinite(series).all():
+        raise ValueError("values must contain only finite values")
+    if recurrence_tolerance < 0 or not np.isfinite(recurrence_tolerance):
+        raise ValueError("recurrence_tolerance must be a finite non-negative value")
+    deltas = np.diff(series)
+    signs = np.sign(deltas)
+    critical: list[int] = []
+    for idx in range(1, series.size - 1):
+        left = signs[idx - 1]
+        right = signs[idx]
+        if left * right < 0 or (left == 0 and right != 0):
+            critical.append(idx)
+    recurrence_count = 0
+    for idx in range(1, series.size):
+        if abs(series[idx] - series[idx - 1]) <= recurrence_tolerance:
+            recurrence_count += 1
+    return DynamicalSignature(
+        critical_indices=tuple(critical),
+        descent_fraction=float(np.count_nonzero(deltas < -recurrence_tolerance) / deltas.size),
+        plateau_count=int(np.count_nonzero(np.abs(deltas) <= recurrence_tolerance)),
+        recurrence_count=recurrence_count,
+        final_drift=float(series[-1] - series[0]),
+    )
+
+
+def braid_crossing_signature(strands: np.ndarray) -> BraidCrossingSignature:
+    points = np.asarray(strands, dtype=float)
+    if points.ndim != 3 or points.shape[0] < 2 or points.shape[1] < 2 or points.shape[2] != 2:
+        raise ValueError("strands must have shape (time, strands, 2) with at least two time steps and strands")
+    if not np.isfinite(points).all():
+        raise ValueError("strands must contain only finite values")
+    braid_word: list[str] = []
+    pair_counts: dict[str, int] = {}
+    n_strands = points.shape[1]
+    for left, right in combinations(range(n_strands), 2):
+        diffs = points[:, left, 0] - points[:, right, 0]
+        previous = 0.0
+        for value in diffs:
+            current = float(np.sign(value))
+            if current == 0.0:
+                continue
+            if previous != 0.0 and current != previous:
+                pair_key = f"{left}-{right}"
+                pair_counts[pair_key] = pair_counts.get(pair_key, 0) + 1
+                generator = f"sigma{min(left, right) + 1}"
+                braid_word.append(generator if previous < current else f"{generator}^-1")
+            previous = current
+    return BraidCrossingSignature(
+        crossing_count=len(braid_word),
+        braid_word=tuple(braid_word),
+        pair_counts=dict(sorted(pair_counts.items())),
+    )
+
+
+def mesh_euler_characteristic(
+    vertices: np.ndarray,
+    edges: Sequence[tuple[int, int]],
+    faces: Sequence[Sequence[int]],
+) -> MeshEulerSignature:
+    verts = np.asarray(vertices, dtype=float)
+    if verts.ndim != 2 or verts.shape[0] == 0 or verts.shape[1] == 0:
+        raise ValueError("vertices must be a non-empty 2D array")
+    if not np.isfinite(verts).all():
+        raise ValueError("vertices must contain only finite values")
+    normalized_edges = {_normalize_edge(edge, verts.shape[0]) for edge in edges}
+    normalized_faces = tuple(_normalize_face(face, verts.shape[0]) for face in faces)
+    face_edges: dict[tuple[int, int], int] = {}
+    for face in normalized_faces:
+        for idx, start in enumerate(face):
+            edge = tuple(sorted((start, face[(idx + 1) % len(face)])))
+            face_edges[edge] = face_edges.get(edge, 0) + 1
+    closed_orientable = bool(normalized_faces) and all(count == 2 for count in face_edges.values())
+    chi = int(verts.shape[0] - len(normalized_edges) + len(normalized_faces))
+    genus: int | None = None
+    if closed_orientable:
+        raw_genus = (2 - chi) / 2
+        if raw_genus >= 0 and float(raw_genus).is_integer():
+            genus = int(raw_genus)
+    return MeshEulerSignature(
+        vertices=int(verts.shape[0]),
+        edges=len(normalized_edges),
+        faces=len(normalized_faces),
+        euler_characteristic=chi,
+        closed_orientable=closed_orientable,
+        genus=genus,
+    )
+
+
 def graph_signature(adjacency: np.ndarray) -> TopologySignature:
     matrix = np.asarray(adjacency, dtype=float)
     if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1] or matrix.shape[0] == 0:
@@ -421,6 +599,42 @@ def _as_points(points: np.ndarray) -> np.ndarray:
     if not np.isfinite(pts).all():
         raise ValueError("points must contain only finite values")
     return pts
+
+
+def _finite_t0(points: frozenset[object], opens: frozenset[frozenset[object]]) -> bool:
+    for left, right in combinations(points, 2):
+        if not any((left in item) != (right in item) for item in opens):
+            return False
+    return True
+
+
+def _finite_t1(points: frozenset[object], opens: frozenset[frozenset[object]]) -> bool:
+    for left, right in combinations(points, 2):
+        left_without_right = any(left in item and right not in item for item in opens)
+        right_without_left = any(right in item and left not in item for item in opens)
+        if not (left_without_right and right_without_left):
+            return False
+    return True
+
+
+def _normalize_edge(edge: tuple[int, int], n_vertices: int) -> tuple[int, int]:
+    if len(edge) != 2:
+        raise ValueError("each edge must contain two vertex indices")
+    left, right = int(edge[0]), int(edge[1])
+    if left == right or left < 0 or right < 0 or left >= n_vertices or right >= n_vertices:
+        raise ValueError("edge indices must reference two distinct vertices")
+    return tuple(sorted((left, right)))
+
+
+def _normalize_face(face: Sequence[int], n_vertices: int) -> tuple[int, ...]:
+    normalized = tuple(int(item) for item in face)
+    if len(normalized) < 3:
+        raise ValueError("each face must contain at least three vertex indices")
+    if len(set(normalized)) != len(normalized):
+        raise ValueError("face vertices must be unique")
+    if any(item < 0 or item >= n_vertices for item in normalized):
+        raise ValueError("face indices must reference vertices")
+    return normalized
 
 
 def _pairwise_distances(points: np.ndarray) -> np.ndarray:

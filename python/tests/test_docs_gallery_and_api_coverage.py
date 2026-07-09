@@ -22,6 +22,7 @@ def test_gallery_documents_many_graph_forms_and_claim_boundaries() -> None:
         "docs/gallery/backend-runtime-gates.md",
         "docs/gallery/topology-training-pipeline.md",
         "docs/gallery/tda-benchmark-evidence-map.md",
+        "docs/gallery/finite-topology-dynamics-and-braids.md",
     ]
     gallery_text = ""
     for page in pages:
@@ -61,6 +62,10 @@ def test_api_docs_cover_public_surface_added_for_backends_and_training() -> None
         "equivariance_residual",
         "scott_fixed_point",
         "weak_convergence_residual",
+        "finite_topology_signature",
+        "dynamical_signature",
+        "braid_crossing_signature",
+        "mesh_euler_characteristic",
         "TensorBundleSpec",
         "TensorAlgebraElement",
         "interop_bundle",

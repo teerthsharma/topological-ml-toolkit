@@ -38,9 +38,18 @@ def test_topology_family_registry_covers_objective_families():
     assert "equivariance_residual" in families["groups_actions_quotients"].api_surface
     assert families["topological_vector_function_space"].status == "prototype"
     assert "weak_convergence_residual" in families["topological_vector_function_space"].api_surface
+    assert families["morse_conley_dynamical"].status == "prototype"
+    assert "dynamical_signature" in families["morse_conley_dynamical"].api_surface
+    assert families["knot_braid_link"].status == "prototype"
+    assert "braid_crossing_signature" in families["knot_braid_link"].api_surface
+    assert families["low_dimensional_geometric"].status == "prototype"
+    assert "mesh_euler_characteristic" in families["low_dimensional_geometric"].api_surface
+    assert families["categorical_pointless"].status == "prototype"
+    assert "finite_topology_signature" in families["categorical_pointless"].api_surface
     assert families["fiber_bundles"].status == "docs"
     assert "TensorBundleSpec" in families["fiber_bundles"].api_surface
-    assert families["point_set"].status == "docs"
+    assert families["point_set"].status == "prototype"
+    assert "finite_topology_signature" in families["point_set"].api_surface
 
 
 def test_topology_family_coverage_matrix_is_public_and_auditable():

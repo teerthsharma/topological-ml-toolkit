@@ -165,6 +165,68 @@ def test_weak_convergence_residual_separates_probe_from_strong_norm():
     assert report.strong_residual == 10.0
 
 
+def test_finite_topology_signature_checks_open_set_axioms_and_separation():
+    signature = topoml.finite_topology_signature(
+        universe={"a", "b"},
+        open_sets=[set(), {"a"}, {"a", "b"}],
+    )
+    indiscrete = topoml.finite_topology_signature(
+        universe={"a", "b"},
+        open_sets=[set(), {"a", "b"}],
+    )
+
+    assert signature.is_topology
+    assert signature.n_open_sets == 3
+    assert signature.is_connected
+    assert signature.is_t0
+    assert not signature.is_t1
+    assert not indiscrete.is_t0
+
+
+def test_dynamical_signature_finds_loss_critical_events_and_recurrence():
+    values = np.array([3.0, 2.0, 1.2, 1.6, 1.1, 1.1, 1.4], dtype=float)
+
+    signature = topoml.dynamical_signature(values, recurrence_tolerance=0.0)
+
+    assert signature.critical_indices == (2, 3, 5)
+    assert np.isclose(signature.descent_fraction, 3.0 / 6.0)
+    assert signature.plateau_count == 1
+    assert signature.recurrence_count == 1
+    assert signature.final_drift == -1.6
+
+
+def test_braid_crossing_signature_records_adjacent_swaps():
+    strands = np.array(
+        [
+            [[0.0, 0.0], [1.0, 0.0]],
+            [[0.5, 0.0], [0.5, 1.0]],
+            [[1.0, 0.0], [0.0, 1.0]],
+        ],
+        dtype=float,
+    )
+
+    signature = topoml.braid_crossing_signature(strands)
+
+    assert signature.crossing_count == 1
+    assert signature.braid_word == ("sigma1",)
+    assert signature.pair_counts == {"0-1": 1}
+
+
+def test_mesh_euler_characteristic_summarizes_low_dimensional_surface():
+    vertices = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]], dtype=float)
+    edges = [(0, 1), (1, 2), (0, 2)]
+    faces = [(0, 1, 2)]
+
+    signature = topoml.mesh_euler_characteristic(vertices, edges, faces)
+
+    assert signature.vertices == 3
+    assert signature.edges == 3
+    assert signature.faces == 1
+    assert signature.euler_characteristic == 1
+    assert not signature.closed_orientable
+    assert signature.genus is None
+
+
 def test_topology_prototype_contracts_are_exported():
     exported = set(topoml.__all__)
 
@@ -176,12 +238,20 @@ def test_topology_prototype_contracts_are_exported():
         "EquivarianceResidual",
         "ScottFixedPointResult",
         "WeakConvergenceResidual",
+        "BraidCrossingSignature",
+        "DynamicalSignature",
+        "FiniteTopologySignature",
+        "MeshEulerSignature",
     }.issubset(exported)
     assert {
+        "braid_crossing_signature",
+        "dynamical_signature",
         "path_homotopy_signature",
         "activation_strata",
         "finite_orbit_signature",
+        "finite_topology_signature",
         "equivariance_residual",
+        "mesh_euler_characteristic",
         "scott_fixed_point",
         "weak_convergence_residual",
     }.issubset(exported)

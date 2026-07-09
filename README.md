@@ -70,6 +70,12 @@ Python package: `topoml`
 - `metric_cover(points, radius)` and `nerve_graph(cover)`
 - `mapper_graph(points, filter_values, intervals, overlap, cluster_radius)`
 - `sheaf_consistency_residual(sections, restrictions)`
+- `path_homotopy_signature`, `activation_strata`, `finite_orbit_signature`,
+  `equivariance_residual`, `scott_fixed_point`, and
+  `weak_convergence_residual`
+- `finite_topology_signature`, `dynamical_signature`,
+  `braid_crossing_signature`, and `mesh_euler_characteristic` for finite
+  point-set, dynamics, braid, and low-dimensional diagnostics
 - `write_dashboard(path, title, diagram, feature_matrix, metadata)`
 - backend metadata and backend selection contracts
 - strict backend adapters through `select_backend_adapter`
@@ -116,6 +122,9 @@ mapper = topoml.mapper_graph(
     overlap=0.25,
     cluster_radius=0.5,
 )
+
+finite = topoml.finite_topology_signature({"a", "b"}, [set(), {"a"}, {"a", "b"}])
+dynamics = topoml.dynamical_signature([3.0, 2.0, 1.2, 1.6, 1.1])
 ```
 
 Static dashboard export:
@@ -186,7 +195,10 @@ The E2E claim benchmark currently verifies:
 - known \(H_1\) square-cycle behavior;
 - time-delay embedding output shape;
 - fixed-width `PHFeaturizer` output;
-- prototype cover, nerve, Mapper, and sheaf residual diagnostics;
+- prototype finite topology, cover, nerve, Mapper, sheaf residual, homotopy,
+  strata, orbit, equivariance, Scott fixed-point, weak convergence, sampled
+  dynamics, braid-crossing, and mesh Euler diagnostics;
+- graph-first gallery pages with explicit claim boundaries;
 - self-contained HTML dashboard export;
 - backend metadata separation between active, runtime-gated, and planned work;
 - import safety for optional heavy stacks;

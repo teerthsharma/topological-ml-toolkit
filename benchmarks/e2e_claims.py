@@ -210,6 +210,26 @@ def _claim_benchmark_record() -> dict:
 
 
 def _claim_topology_prototypes() -> dict:
+    finite_topology = topoml.finite_topology_signature(
+        universe={"a", "b"},
+        open_sets=[set(), {"a"}, {"a", "b"}],
+    )
+    dynamics = topoml.dynamical_signature(np.array([3.0, 2.0, 1.2, 1.6, 1.1, 1.1, 1.4], dtype=float))
+    braid = topoml.braid_crossing_signature(
+        np.array(
+            [
+                [[0.0, 0.0], [1.0, 0.0]],
+                [[0.5, 0.0], [0.5, 1.0]],
+                [[1.0, 0.0], [0.0, 1.0]],
+            ],
+            dtype=float,
+        )
+    )
+    mesh = topoml.mesh_euler_characteristic(
+        np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]], dtype=float),
+        [(0, 1), (1, 2), (0, 2)],
+        [(0, 1, 2)],
+    )
     points = np.array([[0.0, 0.0], [0.2, 0.0], [2.0, 0.0]], dtype=float)
     cover = topoml.metric_cover(points, radius=0.25)
     nerve = topoml.nerve_graph(cover)
@@ -273,7 +293,17 @@ def _claim_topology_prototypes() -> dict:
     assert equivariance.max_residual == 0.0
     assert scott.fixed_point.tolist() == [True, True, True, True]
     assert weak.max_residual == 0.0 and weak.strong_residual == 10.0
+    assert finite_topology.is_topology and finite_topology.is_t0 and not finite_topology.is_t1
+    assert dynamics.critical_indices == (2, 3, 5)
+    assert braid.braid_word == ("sigma1",)
+    assert mesh.euler_characteristic == 1 and mesh.genus is None
     return {
+        "finite_topology": {
+            "n_open_sets": finite_topology.n_open_sets,
+            "is_connected": finite_topology.is_connected,
+            "is_t0": finite_topology.is_t0,
+            "is_t1": finite_topology.is_t1,
+        },
         "cover_cells": [list(cell.members) for cell in cover.cells],
         "nerve_edges": [list(edge) for edge in nerve.edges],
         "mapper_edges": [list(edge) for edge in mapper.edges],
@@ -291,7 +321,20 @@ def _claim_topology_prototypes() -> dict:
             "probe_residuals": weak.probe_residuals.tolist(),
             "strong_residual": weak.strong_residual,
         },
-        "claim_scope": "prototype topology diagnostics, not accelerated backend behavior",
+        "dynamics": {
+            "critical_indices": list(dynamics.critical_indices),
+            "descent_fraction": dynamics.descent_fraction,
+            "plateau_count": dynamics.plateau_count,
+        },
+        "braid": {"crossing_count": braid.crossing_count, "braid_word": list(braid.braid_word)},
+        "mesh_euler": {
+            "vertices": mesh.vertices,
+            "edges": mesh.edges,
+            "faces": mesh.faces,
+            "euler_characteristic": mesh.euler_characteristic,
+            "genus": mesh.genus,
+        },
+        "claim_scope": "finite prototype topology diagnostics, not full theorem proving or accelerated backend behavior",
     }
 
 
@@ -407,6 +450,7 @@ def _claim_visual_topology_gallery_docs() -> dict:
         "runtime_gates": root / "docs" / "gallery" / "backend-runtime-gates.md",
         "training_pipeline": root / "docs" / "gallery" / "topology-training-pipeline.md",
         "benchmark_evidence": root / "docs" / "gallery" / "tda-benchmark-evidence-map.md",
+        "finite_dynamics_braids": root / "docs" / "gallery" / "finite-topology-dynamics-and-braids.md",
     }
     required_phrases = {
         "mapper": ("Mapper graph", "Claim Boundary", "topoml.mapper_graph"),
@@ -417,6 +461,7 @@ def _claim_visual_topology_gallery_docs() -> dict:
         "runtime_gates": ("stateDiagram-v2", "runtime gate", "Claim Boundary"),
         "training_pipeline": ("TopologyRandomForestClassifier", "journey", "Claim Boundary"),
         "benchmark_evidence": ("E2E claims", "Artifact JSON/Markdown", "Claim Boundary"),
+        "finite_dynamics_braids": ("finite_topology_signature", "braid_crossing_signature", "Claim Boundary"),
     }
     evidence = {}
     for key, path in pages.items():
@@ -469,7 +514,7 @@ def run_claims() -> list[ClaimResult]:
             _claim_feature_encoders_and_signatures,
         ),
         _record(
-            "Topology prototype APIs build covers, Mapper, sheaf, homotopy, strata, orbit, equivariance, Scott, and weak-convergence diagnostics",
+            "Topology prototype APIs build finite topology, covers, Mapper, sheaf, homotopy, strata, orbit, equivariance, Scott, weak-convergence, dynamics, braid, and mesh diagnostics",
             _claim_topology_prototypes,
         ),
         _record(
