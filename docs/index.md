@@ -1,7 +1,5 @@
 # Topological ML Toolkit
 
-![Topological ML Toolkit repo image](assets/topological-ml-toolkit-seal.jpeg)
-
 Topological ML Toolkit teaches and implements topology as an engineering tool
 for machine learning pipelines.
 
