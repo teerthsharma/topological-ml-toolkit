@@ -26,6 +26,7 @@ ml = [
 ]
 bench = [
     "ripser>=0.6",
+    "gudhi>=3.9",
     "scikit-learn>=1.3",
     "pandas>=2.0",
 ]

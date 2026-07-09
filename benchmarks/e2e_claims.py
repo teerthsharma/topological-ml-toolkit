@@ -144,10 +144,12 @@ def _claim_backend_source_inventory() -> dict:
         root / "benchmarks" / "benchmark_native_distance.py",
         root / "benchmarks" / "benchmark_asm_distance.py",
         root / "benchmarks" / "benchmark_ml_adapters.py",
+        root / "benchmarks" / "benchmark_tda_baselines.py",
         root / "python" / "topoml" / "native.py",
         root / "python" / "topoml" / "asm.py",
         root / "python" / "tests" / "test_cpp_native_ctypes.py",
         root / "python" / "tests" / "test_asm_native_ctypes.py",
+        root / "python" / "tests" / "test_tda_baseline_parity.py",
         root / "python" / "tests" / "test_framework_adapters.py",
         root / "python" / "tests" / "test_gpu_backend_semantic_contract.py",
         root / "python" / "tests" / "test_cuda_nvcc_compile.py",
@@ -160,7 +162,7 @@ def _claim_backend_source_inventory() -> dict:
         sizes[str(path.relative_to(root)).replace("\\", "/")] = size
     return {
         "source_files": sizes,
-        "claim_scope": "backend source plus native C++, Linux x86-64 ASM, real CPU ML adapter integration, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; runtime selection remains gated",
+        "claim_scope": "backend source plus native C++, Linux x86-64 ASM, external TDA baseline parity, real CPU ML adapter integration, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; runtime selection remains gated",
     }
 
 

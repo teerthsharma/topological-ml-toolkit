@@ -188,6 +188,8 @@ The E2E claim benchmark currently verifies:
 - backend metadata separation between active and planned backends;
 - import safety for optional heavy stacks;
 - benchmark-smoke timing records for the active Python reference path.
+- CI-gated parity against `ripser` and `GUDHI` on small Vietoris-Rips
+  fixtures.
 
 Manual CUDA tensor benchmark for GPU machines:
 
@@ -204,6 +206,7 @@ Run it locally:
 
 ```powershell
 python benchmarks/e2e_claims.py --json-out artifacts/e2e-claims.json --md-out artifacts/e2e-claims.md
+python benchmarks/benchmark_tda_baselines.py --out artifacts/tda-baselines.json
 ```
 
 ## Local Checks

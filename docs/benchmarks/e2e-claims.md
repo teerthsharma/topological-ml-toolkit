@@ -28,6 +28,7 @@ The current E2E gate verifies:
 - planned backend source inventory for CUDA, Assembly, C++, and Triton;
 - import safety for optional ML/GPU stacks;
 - benchmark-smoke timing records for the Python reference path.
+- CI-gated `ripser` and `GUDHI` parity on small Vietoris-Rips fixtures.
 
 ## What Is Not Claimed Yet
 
@@ -46,3 +47,7 @@ python benchmarks/e2e_claims.py --json-out artifacts/e2e-claims.json --md-out ar
 ```
 
 CI uploads the generated JSON and Markdown as benchmark artifacts.
+
+The external TDA baseline artifact is produced separately by
+`benchmarks/benchmark_tda_baselines.py` so parity against established libraries
+is not confused with the internal active-claim smoke report.

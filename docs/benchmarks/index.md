@@ -85,3 +85,22 @@ The artifact records framework versions, dtype/device metadata, topology
 signature values, TensorFlow graph-mode parity, and PyTorch compile-safe capture
 evidence. It is adapter integration evidence, not a model-quality or accelerated
 persistent-homology claim.
+
+## External TDA Baseline Benchmark
+
+CI installs real `ripser` and `GUDHI` wheels and runs:
+
+```powershell
+python -m pytest python/tests/test_tda_baseline_parity.py -q
+python benchmarks/benchmark_tda_baselines.py --out artifacts/tda-baselines.json
+```
+
+The parity fixtures are deliberately small and exact:
+
+- three collinear points check finite \(H_0\) deaths at \(0.2\) and \(4.8\);
+- a unit square checks that \(H_1\) is alive at radius \(1.1\) and killed by
+  radius \(1.5\).
+
+This gate proves the current Python reference path agrees with established TDA
+libraries on the active Vietoris-Rips convention. It does not claim runtime
+leadership, large-scale barcode equivalence, or C++/ASM/GPU acceleration.
