@@ -127,7 +127,8 @@ The artifact records selected topology candidate keys, dense causal baseline
 keys, local-only same-budget keys, random same-budget keys, the budget unit, and
 schedule-build time. It does not import `torch`, `triton`, or require CUDA. This
 is schedule-construction evidence only, not a runtime-kernel, SDPA,
-FlashAttention, or sparse-attention speedup claim.
+FlashAttention, or sparse-attention speedup claim. CI runs this in the
+`benchmark smoke` job and uploads `artifacts/triton-schedule.json`.
 
 ## External TDA Baseline Benchmark
 

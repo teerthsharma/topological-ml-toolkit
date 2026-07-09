@@ -67,6 +67,8 @@ python benchmarks/e2e_claims.py --json-out artifacts/e2e-claims.json --md-out ar
 ```
 
 CI uploads the generated JSON and Markdown as benchmark artifacts.
+The same `benchmark smoke` job also uploads the CPU-only Triton schedule
+construction artifact so the schedule-builder claim has raw benchmark evidence.
 
 The external TDA baseline artifact is produced separately by
 `benchmarks/benchmark_tda_baselines.py` so parity against established libraries

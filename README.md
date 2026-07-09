@@ -260,6 +260,7 @@ Run it locally:
 
 ```powershell
 python benchmarks/e2e_claims.py --json-out artifacts/e2e-claims.json --md-out artifacts/e2e-claims.md
+python benchmarks/benchmark_triton_schedule.py --out artifacts/triton-schedule.json
 python benchmarks/benchmark_tda_baselines.py --out artifacts/tda-baselines.json
 ```
 

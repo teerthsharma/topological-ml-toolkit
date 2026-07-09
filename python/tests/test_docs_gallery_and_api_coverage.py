@@ -130,6 +130,17 @@ def test_benchmark_dataset_docs_are_explicit() -> None:
         assert phrase in text
 
 
+def test_benchmark_docs_cover_ci_uploaded_triton_schedule_artifact() -> None:
+    text = _read_doc("docs/benchmarks/index.md")
+    for phrase in [
+        "benchmark_triton_schedule.py",
+        "artifacts/triton-schedule.json",
+        "benchmark smoke",
+        "schedule-construction evidence only",
+    ]:
+        assert phrase in text
+
+
 def test_runnable_tutorial_docs_cover_example_scripts_and_claim_boundaries() -> None:
     text = _read_doc("docs/tutorials/index.md")
     for phrase in [
