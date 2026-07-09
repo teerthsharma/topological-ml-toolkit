@@ -15,6 +15,8 @@ def test_cuda_and_triton_sources_expose_expected_symbols():
 
     assert "topoml_pairwise_l2_f32" in cuda_distance
     assert "topoml_threshold_edges_u8" in cuda_distance
+    assert "topoml_cuda_pairwise_l2_f32_host" in cuda_distance
+    assert "topoml_cuda_threshold_edges_u8_host" in cuda_distance
     assert "topoml_row_sum_f32" in cuda_reductions
     assert "topoml_persistence_image_accumulate_f32" in cuda_reductions
     assert "@triton.jit" in triton_distance

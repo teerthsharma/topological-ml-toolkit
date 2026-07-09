@@ -15,7 +15,15 @@ ROOT = Path(__file__).resolve().parents[2]
 @pytest.mark.parametrize(
     ("source_name", "expected_symbols"),
     [
-        ("topology_distance.cu", ("topoml_pairwise_l2_f32", "topoml_threshold_edges_u8")),
+        (
+            "topology_distance.cu",
+            (
+                "topoml_pairwise_l2_f32",
+                "topoml_threshold_edges_u8",
+                "topoml_cuda_pairwise_l2_f32_host",
+                "topoml_cuda_threshold_edges_u8_host",
+            ),
+        ),
         ("warp_reductions.cu", ("topoml_row_sum_f32", "topoml_persistence_image_accumulate_f32")),
     ],
 )

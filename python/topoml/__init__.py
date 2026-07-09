@@ -18,6 +18,7 @@ from .backends import (
     backend_adapters,
     select_backend_adapter,
 )
+from .cuda import CudaBuildResult, CudaNativeBackend, build_cuda_native_backend, load_cuda_native_backend
 from .asm import (
     AsmBuildResult,
     AsmDistanceResult,
@@ -95,6 +96,8 @@ __all__ = [
     "BettiCurve",
     "Cover",
     "CoverCell",
+    "CudaBuildResult",
+    "CudaNativeBackend",
     "EquivarianceResidual",
     "OrbitSignature",
     "MapperGraph",
@@ -126,6 +129,7 @@ __all__ = [
     "backend_adapter",
     "backend_adapters",
     "build_asm_native_backend",
+    "build_cuda_native_backend",
     "build_cpp_native_backend",
     "equivariance_residual",
     "finite_orbit_signature",
@@ -134,6 +138,7 @@ __all__ = [
     "interop_add",
     "interop_bundle",
     "load_asm_native_backend",
+    "load_cuda_native_backend",
     "load_cpp_native_backend",
     "mapper_graph",
     "metric_cover",

@@ -87,20 +87,26 @@ Current CPU semantic contract:
 - The same test asserts the CUDA and Triton source files expose the expected
   public symbols.
 - This is not a runtime GPU correctness gate. It defines the outputs that future
-  CUDA extension runtime tests must match.
+  CUDA native runtime tests must match.
 
-Current CUDA compile contract:
+Current CUDA runtime and compile contract:
 
 - `python/tests/test_cuda_nvcc_compile.py` compiles `backends/cuda/topology_distance.cu`
   and `backends/cuda/warp_reductions.cu` to object files when `nvcc` is present.
+- `python/topoml/cuda.py` can compile `backends/cuda/topology_distance.cu` into
+  a shared library and load it through `ctypes`.
+- `python/tests/test_cuda_native_runtime.py` compares CUDA pairwise L2 and
+  threshold-edge output against NumPy when `nvcc`, a host compiler, CUDA
+  runtime, and a CUDA device are usable.
 - The test skips on CPU-only machines without CUDA tooling, so normal users do
   not need a CUDA toolkit to run the package tests.
 - On Windows it also requires the MSVC host compiler `cl.exe` on `PATH`, matching
   `nvcc`'s normal host-compiler requirement.
 - The test is marked `cuda_compile`, so a CUDA-capable runner can enforce just
   this gate with `python -m pytest -m cuda_compile python/tests -q -rs`.
-- This proves source-level CUDA compilability where CUDA tooling exists. It does
-  not launch kernels or claim GPU runtime correctness.
+- This proves source-level CUDA compilability where CUDA tooling exists and
+  runtime correctness where a CUDA device is available. It does not claim broad
+  PH acceleration.
 
 Gate:
 

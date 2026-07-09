@@ -58,6 +58,7 @@ fn planned_acceleration_backends_are_not_selected() {
         BackendId::SafeRust,
         BackendId::Cpp,
         BackendId::AsmAvx512,
+        BackendId::Cuda,
         BackendId::Triton,
         BackendId::PyTorch,
         BackendId::TensorFlow,
@@ -85,4 +86,22 @@ fn triton_metadata_is_active_optional_not_planned() {
         .warnings
         .contains(&BackendWarning::MissingImplementation));
     assert!(select_backend(BackendId::Triton).is_none());
+}
+
+#[test]
+fn cuda_metadata_is_active_optional_not_planned() {
+    let metadata = backend_metadata(BackendId::Cuda).expect("CUDA metadata should exist");
+
+    assert!(metadata.active);
+    assert!(!metadata.available);
+    assert!(!metadata.planned);
+    assert!(metadata
+        .warnings
+        .contains(&BackendWarning::OptionalDependency));
+    assert!(!metadata.warnings.contains(&BackendWarning::PlannedOnly));
+    assert!(!metadata
+        .warnings
+        .contains(&BackendWarning::MissingImplementation));
+    assert!(metadata.gates.iter().any(|gate| gate.contains("CUDA")));
+    assert!(select_backend(BackendId::Cuda).is_none());
 }

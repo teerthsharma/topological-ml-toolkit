@@ -61,6 +61,19 @@ def test_triton_is_active_optional_backend_with_cuda_runtime_gate() -> None:
     assert topoml.select_backend("triton") is None
 
 
+def test_cuda_is_active_optional_backend_with_runtime_gate() -> None:
+    backends = {backend.id: backend for backend in topoml.available_backends()}
+    metadata = backends["cuda"]
+
+    assert metadata.active
+    assert not metadata.available
+    assert not metadata.planned
+    assert "cuda_pairwise_l2" in metadata.capabilities
+    assert "nvcc" in " ".join(metadata.gates).lower()
+    assert "cuda" in " ".join(metadata.warnings).lower()
+    assert topoml.select_backend("cuda") is None
+
+
 def test_no_backends_are_planned_placeholders() -> None:
     backends = {backend.id: backend for backend in topoml.available_backends()}
 

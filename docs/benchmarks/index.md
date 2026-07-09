@@ -46,6 +46,21 @@ reference code, so the artifact separates `cuda_ms` from `cpu_topology_ms`.
 
 The script exits instead of producing fake data when CUDA is unavailable.
 
+## CUDA Native Runtime Check
+
+CUDA machines with `nvcc`, a host compiler, the CUDA runtime, and a usable CUDA
+device can run the native runtime parity test:
+
+```powershell
+python -m pytest python/tests/test_cuda_native_runtime.py -q -rs
+```
+
+The test compiles `backends/cuda/topology_distance.cu` into a shared library,
+loads it through `ctypes`, and compares pairwise L2 distances plus threshold
+edges against NumPy. On machines without the CUDA gate it skips with the missing
+runtime reason. This is preprocessing correctness evidence only, not a
+persistent-homology or speedup claim.
+
 ## Native C++ H0 Benchmark
 
 Ubuntu CI runs a native C++ preprocessing and H0 barcode smoke benchmark:

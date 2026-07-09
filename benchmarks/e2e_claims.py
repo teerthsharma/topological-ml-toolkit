@@ -116,7 +116,7 @@ def _claim_backend_contract() -> dict:
     active = {backend.id for backend in metadata.values() if backend.active}
     available = {backend.id for backend in metadata.values() if backend.active and backend.available}
     planned = {backend.id for backend in metadata.values() if backend.planned and not backend.available}
-    assert {"safe_rust", "python_reference", "cpp", "asm_avx512", "triton", "pytorch", "tensorflow"}.issubset(active)
+    assert {"safe_rust", "python_reference", "cpp", "asm_avx512", "cuda", "triton", "pytorch", "tensorflow"}.issubset(active)
     assert {"safe_rust", "python_reference", "cpp"}.issubset(available)
     assert not planned
     assert topoml.select_backend("triton") is None
@@ -149,9 +149,11 @@ def _claim_backend_source_inventory() -> dict:
         root / "benchmarks" / "benchmark_tda_baselines.py",
         root / "python" / "topoml" / "native.py",
         root / "python" / "topoml" / "asm.py",
+        root / "python" / "topoml" / "cuda.py",
         root / "python" / "topoml" / "triton.py",
         root / "python" / "tests" / "test_cpp_native_ctypes.py",
         root / "python" / "tests" / "test_asm_native_ctypes.py",
+        root / "python" / "tests" / "test_cuda_native_runtime.py",
         root / "python" / "tests" / "test_triton_runtime.py",
         root / "python" / "tests" / "test_tda_baseline_parity.py",
         root / "python" / "tests" / "test_framework_adapters.py",
@@ -166,7 +168,7 @@ def _claim_backend_source_inventory() -> dict:
         sizes[str(path.relative_to(root)).replace("\\", "/")] = size
     return {
         "source_files": sizes,
-        "claim_scope": "active native C++ H0 source, active hardware-gated ASM L2 dispatch, active optional Triton pairwise-L2 runtime wrapper, active optional PyTorch/TensorFlow adapters, external TDA baseline parity, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; CUDA extension runtime acceleration remains gated",
+        "claim_scope": "active native C++ H0 source, active hardware-gated ASM L2 dispatch, active optional CUDA pairwise-L2/threshold runtime wrapper, active optional Triton pairwise-L2 runtime wrapper, active optional PyTorch/TensorFlow adapters, external TDA baseline parity, CPU GPU-kernel semantic fixtures, and optional nvcc CUDA compile coverage; broad GPU PH acceleration remains gated",
     }
 
 
@@ -469,7 +471,7 @@ def run_claims() -> list[ClaimResult]:
         _record("Visual topology gallery documents active Mapper, sheaf, and cover prototypes", _claim_visual_topology_gallery_docs),
         _record("GUI exporter writes a self-contained topology dashboard", _claim_dashboard_export),
         _record("Backend metadata separates active code from planned acceleration", _claim_backend_contract),
-        _record("Backend source files exist for active C++/ASM/Triton and planned CUDA extension work", _claim_backend_source_inventory),
+        _record("Backend source files exist for active C++/ASM/CUDA/Triton runtime work", _claim_backend_source_inventory),
         _record("Importing topoml does not import heavy optional ML/GPU stacks", _claim_import_guard),
         _record("Benchmark runner records active Python-reference timings", _claim_benchmark_record),
     ]

@@ -81,6 +81,16 @@ _BACKEND_METADATA: tuple[BackendMetadata, ...] = (
         warnings=("optional dependency", "CUDA gate"),
     ),
     BackendMetadata(
+        id="cuda",
+        name="CUDA",
+        active=True,
+        available=False,
+        planned=False,
+        capabilities=("cuda_pairwise_l2", "cuda_threshold_edges", "native_extension"),
+        gates=("nvcc compiler", "CUDA runtime", "CUDA device", "NumPy distance equivalence"),
+        warnings=("optional dependency", "CUDA gate"),
+    ),
+    BackendMetadata(
         id="pytorch",
         name="PyTorch",
         active=True,

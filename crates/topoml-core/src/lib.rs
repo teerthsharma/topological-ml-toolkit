@@ -12,6 +12,7 @@ pub enum BackendId {
     SafeRust,
     Cpp,
     AsmAvx512,
+    Cuda,
     Triton,
     PyTorch,
     TensorFlow,
@@ -56,11 +57,21 @@ const CPP_CAPABILITIES: &[BackendCapability] = &[
     BackendCapability::NativeExtension,
 ];
 const ASM_AVX512_CAPABILITIES: &[BackendCapability] = &[BackendCapability::SimdAcceleration];
+const CUDA_CAPABILITIES: &[BackendCapability] = &[
+    BackendCapability::NativeExtension,
+    BackendCapability::SimdAcceleration,
+];
 const FRAMEWORK_CAPABILITIES: &[BackendCapability] = &[BackendCapability::FrameworkAdapter];
 
 const NO_GATES: &[&str] = &[];
 const CPP_GATES: &[&str] = &["portable C ABI", "barcode equivalence"];
 const ASM_AVX512_GATES: &[&str] = &["CPUID AVX-512 support", "barcode equivalence"];
+const CUDA_GATES: &[&str] = &[
+    "nvcc compiler",
+    "CUDA runtime",
+    "CUDA device",
+    "NumPy distance equivalence",
+];
 const TRITON_GATES: &[&str] = &[
     "optional torch dependency",
     "optional triton dependency",
@@ -113,6 +124,16 @@ pub const BACKEND_METADATA: &[BackendMetadata] = &[
         capabilities: ASM_AVX512_CAPABILITIES,
         gates: ASM_AVX512_GATES,
         warnings: ASM_AVX512_WARNINGS,
+    },
+    BackendMetadata {
+        id: BackendId::Cuda,
+        name: "cuda",
+        active: true,
+        available: false,
+        planned: false,
+        capabilities: CUDA_CAPABILITIES,
+        gates: CUDA_GATES,
+        warnings: OPTIONAL_FRAMEWORK_WARNINGS,
     },
     BackendMetadata {
         id: BackendId::Triton,

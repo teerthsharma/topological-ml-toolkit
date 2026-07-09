@@ -18,7 +18,7 @@ from topoml.backends import (
 PLANNED_BACKENDS: set[str] = set()
 ACTIVE_HARDWARE_BACKENDS = {"asm_avx512"}
 ACTIVE_OPTIONAL_BACKENDS = {"pytorch", "tensorflow"}
-ACTIVE_GPU_BACKENDS = {"triton"}
+ACTIVE_GPU_BACKENDS = {"cuda", "triton"}
 
 
 def test_import_topoml_does_not_import_optional_backend_stacks() -> None:
@@ -56,6 +56,7 @@ def test_active_backend_adapters_are_metadata_available() -> None:
     assert adapters["python_reference"].status == "active"
     assert adapters["cpp"].status == "active"
     assert adapters["asm_avx512"].status == "active"
+    assert adapters["cuda"].status == "active"
     assert adapters["triton"].status == "active"
     assert adapters["pytorch"].status == "active"
     assert adapters["tensorflow"].status == "active"
