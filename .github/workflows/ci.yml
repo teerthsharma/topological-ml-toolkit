@@ -65,7 +65,7 @@ jobs:
       - name: Strict docs build
         run: mkdocs build --strict
       - name: Upload docs site artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mkdocs-site
           path: site
@@ -90,7 +90,7 @@ jobs:
       - name: Certified similarity reuse benchmark
         run: python benchmarks/benchmark_persistence_similarity.py --out artifacts/persistence-similarity.json --points 32 64 --frames 8 16 --repetitions 10 --warmups 2 --bootstrap-resamples 2000
       - name: Upload benchmark artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: benchmark-and-claim-artifacts
           path: artifacts/
@@ -111,7 +111,7 @@ jobs:
       - name: External TDA baseline benchmark
         run: python benchmarks/benchmark_tda_baselines.py --out artifacts/tda-baselines.json
       - name: Upload TDA baseline artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: tda-baseline-artifacts
           path: artifacts/
@@ -134,7 +134,7 @@ jobs:
       - name: ASM distance benchmark smoke
         run: python benchmarks/benchmark_asm_distance.py --out artifacts/asm-distance.json --points 8 16 --dims 8
       - name: Upload native artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: native-distance-artifacts
           path: artifacts/
@@ -158,7 +158,7 @@ jobs:
       - name: Framework adapter benchmark smoke
         run: python benchmarks/benchmark_ml_adapters.py --out artifacts/ml-adapters.json
       - name: Upload ML integration artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ml-integration-artifacts
           path: artifacts/
