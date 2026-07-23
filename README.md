@@ -56,6 +56,8 @@ Rust crate: `topoml-core`
 Python package: `topoml`
 
 - `persistent_homology(points, max_dim, max_radius)`
+- `persistence_similarity_trajectory(points, max_dim, max_radius, tolerance)`
+- `rescale_persistence_diagram(diagram, scale)`
 - `time_delay_embedding(samples, dimension, tau)`
 - `PersistenceDiagram.betti_at(radius)`
 - `PersistenceDiagram.to_plotly_trace(dimension)`
@@ -262,6 +264,7 @@ Run it locally:
 python benchmarks/e2e_claims.py --json-out artifacts/e2e-claims.json --md-out artifacts/e2e-claims.md
 python benchmarks/benchmark_triton_schedule.py --out artifacts/triton-schedule.json
 python benchmarks/benchmark_tda_baselines.py --out artifacts/tda-baselines.json
+python benchmarks/benchmark_persistence_similarity.py --out artifacts/persistence-similarity.json --points 32 64 --frames 8 16 --repetitions 10
 ```
 
 ## Local Checks

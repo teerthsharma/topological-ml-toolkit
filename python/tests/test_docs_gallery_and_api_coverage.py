@@ -48,6 +48,10 @@ def test_api_docs_cover_public_surface_added_for_backends_and_training() -> None
     api = _read_doc("docs/reference/api.md")
     required_symbols = [
         "persistent_homology",
+        "persistence_similarity_trajectory",
+        "rescale_persistence_diagram",
+        "SimilarityCertificate",
+        "PersistenceTrajectory",
         "time_delay_embedding",
         "PHFeaturizer",
         "BettiCurve",
@@ -137,6 +141,17 @@ def test_benchmark_docs_cover_ci_uploaded_triton_schedule_artifact() -> None:
         "artifacts/triton-schedule.json",
         "benchmark smoke",
         "schedule-construction evidence only",
+    ]:
+        assert phrase in text
+
+
+def test_benchmark_docs_cover_similarity_reuse_claim_boundary() -> None:
+    text = _read_doc("docs/benchmarks/index.md")
+    for phrase in [
+        "benchmark_persistence_similarity.py",
+        "artifacts/persistence-similarity.json",
+        "Python reference H0",
+        "not a universal backend speed claim",
     ]:
         assert phrase in text
 

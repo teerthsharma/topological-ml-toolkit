@@ -58,6 +58,36 @@ def _claim_h1_square_cycle() -> dict:
     return {"expected": expected, "observed": observed, "pairs": len(diagram.pairs)}
 
 
+def _claim_similarity_trajectory_reuse() -> dict:
+    base = np.array([[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]], dtype=float)
+    scales = np.array([1.0, 0.75, 0.5])
+    frames = np.stack([scale * base + np.array([index, -index]) for index, scale in enumerate(scales)])
+    result = topoml.persistence_similarity_trajectory(frames, max_dim=1, tolerance=1e-10)
+    dense = tuple(topoml.persistent_homology(frame, max_dim=1) for frame in frames)
+    assert result.mode == "similarity-reuse"
+    assert result.persistence_evaluations == 1
+    assert result.certificate.certified
+    for observed, expected in zip(result.diagrams, dense):
+        assert len(observed.pairs) == len(expected.pairs)
+        for got, want in zip(observed.pairs, expected.pairs):
+            assert np.isclose(got.birth, want.birth, rtol=1e-10, atol=1e-12)
+            assert (got.death is None) == (want.death is None)
+            assert got.death is None or np.isclose(
+                got.death,
+                want.death,
+                rtol=1e-10,
+                atol=1e-12,
+            )
+    return {
+        "frames": len(frames),
+        "persistence_evaluations": result.persistence_evaluations,
+        "work_reduction": 1.0 - result.persistence_evaluations / len(frames),
+        "scales": list(result.certificate.scales),
+        "max_relative_distortion": max(result.certificate.max_relative_distortion),
+        "claim_scope": "exact certified similarity trajectory; full filtration; no universal speed claim",
+    }
+
+
 def _claim_time_delay_embedding() -> dict:
     samples = np.array([0.0, 1.0, 0.0, -1.0, 0.0, 1.0], dtype=float)
     cloud = topoml.time_delay_embedding(samples, dimension=3, tau=1)
@@ -632,6 +662,10 @@ def run_claims() -> list[ClaimResult]:
     return [
         _record("H0 cluster merges match known Betti numbers", _claim_h0_cluster_merges),
         _record("H1 square cycle appears and is filled by diagonals/triangles", _claim_h1_square_cycle),
+        _record(
+            "Certified similarity trajectories reuse one persistence computation",
+            _claim_similarity_trajectory_reuse,
+        ),
         _record("Time-delay embedding returns graph-ready delay vectors", _claim_time_delay_embedding),
         _record("PHFeaturizer exports fixed-width ML feature matrices", _claim_ph_featurizer),
         _record(

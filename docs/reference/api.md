@@ -45,6 +45,31 @@ let cloud = time_delay_embedding::<3>(&samples, 1)?;
 
 Returns a `PersistenceDiagram`.
 
+### Certified similarity trajectories
+
+`topoml.persistence_similarity_trajectory(points, max_dim=1, max_radius=inf,
+tolerance=1e-10)` accepts a NumPy array shaped `(frames, points, coordinates)`.
+It checks whether every frame's pairwise distances equal one positive scale
+times the first frame's distances. When certified with a full filtration, it
+computes persistence once and rescales the diagram for every frame.
+
+The returned `PersistenceTrajectory` contains `diagrams`, `mode`,
+`persistence_evaluations`, and a `SimilarityCertificate`. The certificate
+records `certified`, fitted `scales`, per-frame `max_relative_distortion`, the
+requested `tolerance`, and a diagnostic `reason`.
+
+```python
+frames = np.stack([points, 0.8 * points, 0.5 * points])
+result = topoml.persistence_similarity_trajectory(frames, max_dim=1)
+assert result.mode == "similarity-reuse"
+assert result.persistence_evaluations == 1
+```
+
+`topoml.rescale_persistence_diagram(diagram, scale)` multiplies finite birth and
+death coordinates by a positive finite scale while preserving essential deaths.
+Finite `max_radius` requests and uncertified trajectories use explicit dense
+fallback modes so cutoff semantics and non-similarity motion are not hidden.
+
 ### `PersistenceDiagram.betti_at(radius)`
 
 Returns `BettiNumbers(beta0, beta1, beta2)`.

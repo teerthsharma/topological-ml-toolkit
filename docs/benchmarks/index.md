@@ -31,6 +31,20 @@ claim gate, not a full performance study. It records deterministic evidence for
 active public behavior and marks timing rows as smoke records rather than
 speedup claims.
 
+## Certified Similarity-Reuse Benchmark
+
+CI runs a paired benchmark for exact uniformly scaled trajectories:
+
+```powershell
+python benchmarks/benchmark_persistence_similarity.py --out artifacts/persistence-similarity.json --points 32 64 --frames 8 16 --repetitions 10
+```
+
+The artifact contains every raw paired timing sample, randomized execution
+order, a paired 99% bootstrap interval, certificate distortion, and the number
+of persistence evaluations. Its scope is Python reference H0 on deterministic
+synthetic similarity trajectories. It is not a universal backend speed claim,
+and it does not compare against `ripser`, GUDHI, Rust, CUDA, or Triton.
+
 ## CUDA Tensor Benchmark
 
 GPU machines can run a manual CUDA tensor benchmark:

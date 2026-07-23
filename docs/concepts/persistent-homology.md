@@ -128,6 +128,40 @@ an intermediate object. Common downstream encodings include:
 The active package currently implements diagram queries and Betti-curve feature
 matrices through `PHFeaturizer`.
 
+## Exact Reuse Under Similarity Motion
+
+Suppose every pairwise distance in trajectory frame \(t\) obeys
+
+\[
+d_t(x_i,x_j)=s_t d_0(x_i,x_j), \qquad s_t>0.
+\]
+
+Then the Vietoris-Rips filtration is only reparameterized:
+
+\[
+VR_r(X_t) \cong VR_{r/s_t}(X_0).
+\]
+
+Every persistence interval transforms as
+
+\[
+[b,d) \mapsto [s_t b,s_t d),
+\]
+
+with essential deaths remaining infinite. Therefore
+
+\[
+\beta_k^{(t)}(r)=\beta_k^{(0)}(r/s_t).
+\]
+
+`persistence_similarity_trajectory` checks this distance condition numerically.
+Its tolerance is an implementation certificate, not proof that noisy measured
+motion follows an exact physical law. Anisotropic deformation, independent point
+motion, and duplicate base points that later separate fail certification and use
+dense recomputation. Finite filtration cutoffs also use the dense path because
+the current reference reducer's cutoff changes which truncated bars appear
+essential.
+
 ## Failure Modes
 
 Topology is useful when it captures structure beyond norm, density, or recency.
