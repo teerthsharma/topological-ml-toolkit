@@ -35,6 +35,12 @@ from .features import (
     activation_signature,
     point_cloud_signature,
 )
+from .persistence import (
+    PersistenceTrajectory,
+    SimilarityCertificate,
+    persistence_similarity_trajectory,
+    rescale_persistence_diagram,
+)
 from .datasets import (
     BenchmarkDataset,
     list_benchmark_datasets,
@@ -135,7 +141,9 @@ __all__ = [
     "PHFeaturizer",
     "PersistenceDiagram",
     "PersistencePair",
+    "PersistenceTrajectory",
     "PersistenceImage",
+    "SimilarityCertificate",
     "SheafResidual",
     "SklearnUnavailableError",
     "StratumSignature",
@@ -183,7 +191,9 @@ __all__ = [
     "path_homotopy_signature",
     "scott_fixed_point",
     "persistent_homology",
+    "persistence_similarity_trajectory",
     "point_cloud_signature",
+    "rescale_persistence_diagram",
     "select_backend",
     "select_backend_adapter",
     "sheaf_consistency_residual",

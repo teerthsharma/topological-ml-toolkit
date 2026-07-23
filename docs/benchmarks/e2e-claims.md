@@ -19,6 +19,8 @@ The current E2E gate verifies:
 
 - known \(H_0\) cluster merges for a three-point cloud;
 - an \(H_1\) square cycle that appears before diagonal/triangle filling;
+- certified full-filtration similarity trajectories that match dense persistence
+  while evaluating persistent homology once;
 - public deterministic benchmark dataset fixtures with expected topology
   metadata;
 - time-delay embedding shape and first delay vector;

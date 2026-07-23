@@ -87,6 +87,8 @@ jobs:
         run: python benchmarks/benchmark_triton_schedule.py --out artifacts/triton-schedule.json
       - name: E2E active claim benchmark
         run: python benchmarks/e2e_claims.py --json-out artifacts/e2e-claims.json --md-out artifacts/e2e-claims.md
+      - name: Certified similarity reuse benchmark
+        run: python benchmarks/benchmark_persistence_similarity.py --out artifacts/persistence-similarity.json --points 32 64 --frames 8 16 --repetitions 10 --warmups 2 --bootstrap-resamples 2000
       - name: Upload benchmark artifact
         uses: actions/upload-artifact@v4
         with:

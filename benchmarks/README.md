@@ -11,6 +11,7 @@ python benchmarks/benchmark_asm_distance.py --out artifacts/asm-distance.json --
 python benchmarks/benchmark_ml_adapters.py --out artifacts/ml-adapters.json
 python benchmarks/benchmark_triton_schedule.py --out artifacts/triton-schedule.json
 python benchmarks/benchmark_tda_baselines.py --out artifacts/tda-baselines.json
+python benchmarks/benchmark_persistence_similarity.py --out artifacts/persistence-similarity.json --points 32 64 --frames 8 16 --repetitions 10
 ```
 
 ## Manual Hardware-Gated Commands
