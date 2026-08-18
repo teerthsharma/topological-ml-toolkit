@@ -1,0 +1,21 @@
+{
+  "title": "Topological ML Toolkit: shape-of-data features for Rust and Python ML pipelines",
+  "description": "<p>A Rust and Python library that turns the shape of data into features, diagnostics, and benchmarked ML pipeline components. It measures connected components, loops, voids, covers, neighborhoods, trajectories, and consistency constraints, and exposes them as ordinary ML features, model-debugging signals, or routing rules for people already building on scikit-learn, PyTorch, TensorFlow, and Rust.</p>",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "mit",
+  "creators": [{ "name": "Sharma, Teerth" }],
+  "keywords": [
+    "topological data analysis",
+    "persistent homology",
+    "Betti curves",
+    "manifold embeddings",
+    "feature engineering",
+    "machine learning",
+    "Rust",
+    "Python"
+  ],
+  "related_identifiers": [
+    { "identifier": "https://github.com/teerthsharma/topological-ml-toolkit", "relation": "isSupplementTo", "scheme": "url" }
+  ]
+}

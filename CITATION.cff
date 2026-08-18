@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+type: software
+title: "Topological ML Toolkit: shape-of-data features for Rust and Python ML pipelines"
+abstract: >-
+  A Rust and Python library that turns the shape of data into features,
+  diagnostics, and benchmarked ML pipeline components. It measures
+  connected components, loops, voids, covers, neighborhoods, trajectories,
+  and consistency constraints, and exposes them as ordinary ML features,
+  model-debugging signals, or routing rules.
+authors:
+  - family-names: Sharma
+    given-names: Teerth
+    email: teerths57@gmail.com
+version: 0.1.0
+date-released: 2026-08-18
+url: "https://github.com/teerthsharma/topological-ml-toolkit"
+repository-code: "https://github.com/teerthsharma/topological-ml-toolkit"
+license: MIT
+keywords:
+  - topological data analysis
+  - persistent homology
+  - Betti curves
+  - manifold embeddings
+  - feature engineering
+  - machine learning
+  - Rust
+  - Python
