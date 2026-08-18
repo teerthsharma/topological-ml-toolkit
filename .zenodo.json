@@ -4,7 +4,12 @@
   "upload_type": "software",
   "access_right": "open",
   "license": "mit",
-  "creators": [{ "name": "Sharma, Teerth" }],
+  "creators": [
+    {
+      "name": "Sharma, Teerth",
+      "orcid": "0009-0005-0882-9168"
+    }
+  ],
   "keywords": [
     "topological data analysis",
     "persistent homology",
@@ -16,6 +21,10 @@
     "Python"
   ],
   "related_identifiers": [
-    { "identifier": "https://github.com/teerthsharma/topological-ml-toolkit", "relation": "isSupplementTo", "scheme": "url" }
+    {
+      "identifier": "https://github.com/teerthsharma/topological-ml-toolkit",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
   ]
 }
