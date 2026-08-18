@@ -1,5 +1,7 @@
 # Topological ML Toolkit
 
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21997818-1682D4?style=flat-square)](https://doi.org/10.5281/zenodo.21997818)
+
 Topological ML Toolkit is a Rust and Python library for turning the shape of
 data into features, diagnostics, and benchmarked ML pipeline components.
 
