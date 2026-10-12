@@ -2,6 +2,8 @@
 
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21997818-1682D4?style=flat-square)](https://doi.org/10.5281/zenodo.21997818)
 
+<p align="center"><a href="https://teerth.blog/topological-ml-toolkit"><b>Read the essay at teerth.blog/topological-ml-toolkit</b></a> &nbsp;·&nbsp; the maths, the proofs and live figures</p>
+
 Topological ML Toolkit is a Rust and Python library for turning the shape of
 data into features, diagnostics, and benchmarked ML pipeline components.
 
