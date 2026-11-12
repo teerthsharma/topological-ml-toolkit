@@ -1,6 +1,6 @@
 site_name: Topological ML Toolkit
 site_description: Graph-first persistent homology and manifold embedding docs for ML practitioners.
-site_url: https://teerthsharma.github.io/topological-ml-toolkit/
+site_url: https://teerth.dev/topological-ml-toolkit/
 repo_url: https://github.com/teerthsharma/topological-ml-toolkit
 theme:
   name: material
